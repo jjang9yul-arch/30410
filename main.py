@@ -63,8 +63,12 @@ with st.sidebar:
     st.subheader("🎵 BGM 설정")
     play_bgm = st.checkbox("Lose My Mind 재생", value=False)
     if play_bgm:
-        st.audio("https://audio.com/sky-design-studio/audio/ptmusiccoza-don-toliver-lose-my-mind-feat-doja-cat-from-f1-the-movie-official-audio-320-kb", format="audio/mp3")
-        st.caption("Don Toliver - Lose My Mind (feat. Doja Cat) [F1® Movie OST]")
+        try:
+            # 같은 폴더에 저장된 lose_my_mind.mp3 사용
+            st.audio("lose_my_mind.mp3", format="audio/mp3")
+            st.caption("Don Toliver - Lose My Mind (feat. Doja Cat) [F1® Movie OST]")
+        except FileNotFoundError:
+            st.error("⚠️ 프로젝트 폴더에 'lose_my_mind.mp3' 음원 파일이 없습니다. 파일을 추가해 주세요.")
 
 # 데이터베이스
 f1_database = [
