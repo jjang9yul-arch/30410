@@ -17,19 +17,19 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* 상단 F1 로고 전용 헤더 영역 (크기 확대 적용) */
+    /* 상단 F1 로고 전용 헤더 영역 (크기 대폭 확대: 450px) */
     .f1-header-container {
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 30px 0;
+        padding: 40px 0;
         border-bottom: 2px solid rgba(225, 6, 0, 0.4);
         margin-bottom: 35px;
     }
 
     .f1-logo-img {
-        width: 280px; /* 로고 크기 대폭 확대 */
-        filter: drop-shadow(0px 0px 20px rgba(225, 6, 0, 0.85));
+        width: 450px; /* 로고 크기 대폭 확대 */
+        filter: drop-shadow(0px 0px 25px rgba(225, 6, 0, 0.9));
     }
 
     /* 팀 카드 스타일 */
@@ -62,7 +62,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 헤더 영역 (텍스트 제거 및 대형 F1 로고만 단독 배치)
+# 1. 헤더 영역 (대형 F1 로고)
 st.markdown("""
     <div class="f1-header-container">
         <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
@@ -121,6 +121,28 @@ f1_database = [
              "desc": "시가지 서킷의 제왕이라 불리며 통산 6회 우승을 기록한 남미를 대표하는 베테랑입니다.\n타이어 수명을 극도로 늘리는 독보적인 타이어 관리 능력으로 유명합니다.\n치열한 중위권 싸움에서 포디움을 끌어내는 탁월한 위기관리 능력을 자랑합니다.\n신생 캐딜락 팀에 합류하여 풍부한 경험을 바탕으로 실점 없는 포인트를 노립니다."}
         ]
     }
+]
+
+# 2026 시즌 순위 데이터
+driver_standings_2026 = [
+    {"rank": 1, "driver": "키미 안토넬리", "team": "메르세데스", "points": 242, "wins": 6},
+    {"rank": 2, "driver": "조지 러셀", "team": "메르세데스", "points": 215, "wins": 2},
+    {"rank": 3, "driver": "랜도 노리스", "team": "맥라렌", "points": 188, "wins": 2},
+    {"rank": 4, "driver": "샤를 르클레르", "team": "페라리", "points": 164, "wins": 1},
+    {"rank": 5, "driver": "루이스 해밀턴", "team": "페라리", "points": 142, "wins": 1},
+    {"rank": 6, "driver": "막스 베르스타펜", "team": "레드불", "points": 130, "wins": 0},
+    {"rank": 7, "driver": "오스카 피아스트리", "team": "맥라렌", "points": 112, "wins": 0},
+    {"rank": 8, "driver": "츠노다 유키", "team": "레드불", "points": 48, "wins": 0},
+    {"rank": 9, "driver": "발테리 보타스", "team": "캐딜락", "points": 18, "wins": 0},
+    {"rank": 10, "driver": "세르히오 페레스", "team": "캐딜락", "points": 12, "wins": 0}
+]
+
+team_standings_2026 = [
+    {"rank": 1, "team": "메르세데스", "points": 457, "wins": 8},
+    {"rank": 2, "team": "맥라렌", "points": 300, "wins": 2},
+    {"rank": 3, "team": "페라리", "points": 306, "wins": 2},
+    {"rank": 4, "team": "레드불 레이싱", "points": 178, "wins": 0},
+    {"rank": 5, "team": "캐딜락 F1 팀", "points": 30, "wins": 0}
 ]
 
 # 2026 시즌 경기 일정 및 포디움 결과
@@ -185,11 +207,48 @@ f1_races_2026 = [
     {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷", "date": "2026. 12. 06", "status": "예정", "podium": None}
 ]
 
-# 탭 메뉴 구성
-tab1, tab2 = st.tabs(["🏎️ F1 팀 & 드라이버", "📅 2026 경기 일정 및 포디움 결과"])
+# 탭 메뉴 구성 (3개 탭으로 확장)
+tab1, tab2, tab3 = st.tabs(["🏆 2026 시즌 순위", "🏎️ F1 팀 & 드라이버", "📅 경기 일정 및 포디움"])
 
-# Tab 1: 팀 및 드라이버 정보
+# Tab 1: 드라이버 및 팀 순위 (신규 추가)
 with tab1:
+    st.subheader("🏆 2026 World Championship Standings")
+    st.caption("12R 네덜란드 그랑프리 종료 기준 실시간 챔피언십 포인트입니다.")
+    st.write("")
+
+    col_rank1, col_rank2 = st.columns(2)
+
+    with col_rank1:
+        st.markdown("### 🏎️ **드라이버 챔피언십 순위**")
+        st.dataframe(
+            driver_standings_2026,
+            column_config={
+                "rank": "순위",
+                "driver": "드라이버",
+                "team": "소속 팀",
+                "points": "포인트 (PTS)",
+                "wins": "우승 횟수"
+            },
+            use_container_width=True,
+            hide_index=True
+        )
+
+    with col_rank2:
+        st.markdown("### 🛠️ **컨스트럭터(팀) 챔피언십 순위**")
+        st.dataframe(
+            team_standings_2026,
+            column_config={
+                "rank": "순위",
+                "team": "팀 명칭",
+                "points": "총 포인트 (PTS)",
+                "wins": "우승 횟수"
+            },
+            use_container_width=True,
+            hide_index=True
+        )
+
+# Tab 2: 팀 및 드라이버 정보
+with tab2:
     team_names = [t["team_kr"] for t in f1_database]
     selected_team_name = st.selectbox("팀을 선택하세요", team_names)
 
@@ -224,8 +283,8 @@ with tab1:
                         for line in driver["desc"].split("\n"):
                             st.write(f"• {line}")
 
-# Tab 2: 카드형 일정표 및 포디움 결과
-with tab2:
+# Tab 3: 카드형 일정표 및 포디움 결과
+with tab3:
     st.subheader("🏁 2026 FIA F1 그랑프리 일정 & 경기 결과")
     st.caption("라운드별 일정과 현재까지 진행된 경기 포디움(1·2·3위) 결과입니다.")
     st.write("")
