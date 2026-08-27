@@ -17,17 +17,31 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
+    /* 헤더 및 로고 스타일 */
+    .header-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 30px;
+        padding-top: 10px;
+    }
+
+    .f1-logo {
+        width: 100px;
+    }
+
     .f1-header {
         font-family: 'Orbitron', sans-serif;
-        font-size: 2.2rem;
+        font-size: 2.3rem;
         font-weight: 900;
-        text-align: center;
         background: linear-gradient(90deg, #ffffff, #e10600);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin-bottom: 25px;
+        margin: 0;
     }
 
+    /* 팀 카드 스타일 */
     .team-card {
         background: rgba(21, 26, 36, 0.85);
         border-radius: 12px;
@@ -54,11 +68,34 @@ st.markdown("""
         margin-right: 8px;
         margin-top: 8px;
     }
+
+    /* 일정 카드 스타일 (넓은 간격) */
+    .race-card {
+        background: rgba(26, 32, 44, 0.75);
+        border-left: 5px solid #e10600;
+        border-radius: 10px;
+        padding: 18px 22px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    .podium-box {
+        background: rgba(15, 20, 28, 0.8);
+        border-radius: 8px;
+        padding: 10px 15px;
+        margin-top: 10px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
     </style>
 """, unsafe_allow_html=True)
 
-# 헤더
-st.markdown('<div class="f1-header">🏎️ 2026 F1 WORLD CHAMPIONSHIP</div>', unsafe_allow_html=True)
+# 1. 로고 포함 헤더 영역
+st.markdown("""
+    <div class="header-container">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" class="f1-logo" alt="F1 Logo">
+        <h1 class="f1-header">2026 F1 WORLD CHAMPIONSHIP</h1>
+    </div>
+""", unsafe_allow_html=True)
 
 # 데이터베이스
 f1_database = [
@@ -94,7 +131,7 @@ f1_database = [
     },
     {
         "team_en": "Oracle Red Bull Racing", "team_kr": "레드불", "color": "#3671C6", "principal": "Christian Horner", "power_unit": "Honda RBPT",
-        "team_desc": "에어로다이내믹의 거장 에드리안 뉴이의 설계와 과감한 레이싱 스피릿을 바탕으로 F1에 지각변동을 일으킨 팀입니다. 압도적인 피트스탑 속도와 한계에 도전하는 전략으로 다수의 챔피언십을 타이틀을 보유하고 있습니다.",
+        "team_desc": "에어로다이내믹의 거장 에드리안 뉴이의 설계와 과감한 레이싱 스피릿을 바탕으로 F1에 지각변동을 일으킨 팀입니다. 압도적인 피트스탑 속도와 한계에 도전하는 전략으로 다수의 챔피언십 타이틀을 보유하고 있습니다.",
         "drivers": [
             {"name_en": "Max Verstappen", "name_kr": "막스 베르스타펜", "number": "33", "country": "네덜란드", "birth": "1997.09.30", "role": "메인 드라이버", 
              "desc": "역대 최연소 데뷔 및 우승 기록을 경신하며 F1의 시대를 새로 쓴 월드 챔피언입니다.\n타협 없는 공격적인 추월 방식과 한 치의 오차도 없는 압도적인 레이스 페이스를 보유하고 있습니다.\n어떠한 노면 환경에서도 최상의 스피드를 끌어내는 독보적인 드라이빙 감각을 보여줍니다.\n레드불 레이싱의 절대적인 에이스로서 연승 기록을 이어나가고 있습니다."},
@@ -109,38 +146,76 @@ f1_database = [
             {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드", "birth": "1989.08.28", "role": "메인 드라이버", 
              "desc": "메르세데스 시절 통산 10회 우승을 차지하며 팀의 5연속 컨스트럭터 우승에 기여한 베테랑입니다.\n날카로운 원랩 스피드와 정교한 차량 피드백 능력으로 신생 팀 개발에 최적화되어 있습니다.\n풍부한 경험을 바탕으로 캐딜락 F1 팀의 초기 차체 셋업 및 안정화 작업을 이끌고 있습니다.\n특유의 쿨한 성격과 안정감 있는 레이스 운용으로 팀의 중심을 잡아줍니다."},
             {"name_en": "Sergio Pérez", "name_kr": "세르히오 페레스", "number": "11", "country": "멕시코", "birth": "1990.01.26", "role": "메인 드라이버", 
-             "desc": "시가가지 서킷의 제왕이라 불리며 통산 6회 우승을 기록한 남미를 대표하는 베테랑입니다.\n타이어 수명을 극도로 늘리는 독보적인 타이어 관리 능력으로 유명합니다.\n치열한 중위권 싸움에서 포디움을 끌어내는 탁월한 위기관리 능력을 자랑합니다.\n신생 캐딜락 팀에 합류하여 풍부한 경험을 바탕으로 실점 없는 포인트를 노립니다."}
+             "desc": "시가지 서킷의 제왕이라 불리며 통산 6회 우승을 기록한 남미를 대표하는 베테랑입니다.\n타이어 수명을 극도로 늘리는 독보적인 타이어 관리 능력으로 유명합니다.\n치열한 중위권 싸움에서 포디움을 끌어내는 탁월한 위기관리 능력을 자랑합니다.\n신생 캐딜락 팀에 합류하여 풍부한 경험을 바탕으로 실점 없는 포인트를 노립니다."}
         ]
     }
 ]
 
-f1_schedule_2026 = [
-    {"라운드": "1R", "국가": "🇦🇺 오스트레일리아", "서킷 명칭": "앨버트 파크 서킷", "도시": "멜버른", "결승 날짜": "2026. 03. 08"},
-    {"라운드": "2R", "국가": "🇨🇳 중국", "서킷 명칭": "상하이 인터내셔널 서킷", "도시": "상하이", "결승 날짜": "2026. 03. 15"},
-    {"라운드": "3R", "국가": "🇯🇵 일본", "서킷 명칭": "스즈카 서킷", "도시": "스즈카", "결승 날짜": "2026. 03. 29"},
-    {"라운드": "4R", "국가": "🇺🇸 미국", "서킷 명칭": "마이애미 인터내셔널 오토드로름", "도시": "마이애미", "결승 날짜": "2026. 05. 03"},
-    {"라운드": "5R", "국가": "🇨🇦 캐나다", "서킷 명칭": "서킷 질 빌뇌브", "도시": "몬트리올", "결승 날짜": "2026. 05. 24"},
-    {"라운드": "6R", "국가": "🇲🇨 모나코", "서킷 명칭": "서킷 드 모나코", "도시": "몬테카를로", "결승 날짜": "2026. 06. 07"},
-    {"라운드": "7R", "국가": "🇪🇸 스페인", "서킷 명칭": "서킷 드 바르셀로나-카탈루냐", "도시": "바르셀로나", "결승 날짜": "2026. 06. 14"},
-    {"라운드": "8R", "국가": "🇦🇹 오스트리아", "서킷 명칭": "레드불 링", "도시": "슈필베르크", "결승 날짜": "2026. 06. 28"},
-    {"라운드": "9R", "국가": "🇬🇧 영국", "서킷 명칭": "실버스톤 서킷", "도시": "실버스톤", "결승 날짜": "2026. 07. 05"},
-    {"라운드": "10R", "국가": "🇧🇪 벨기에", "서킷 명칭": "스파-프랑코샹 서킷", "도시": "스파", "결승 날짜": "2026. 07. 19"},
-    {"라운드": "11R", "국가": "🇭🇺 헝가리", "서킷 명칭": "헝가로링", "도시": "부다페스트", "결승 날짜": "2026. 07. 26"},
-    {"라운드": "12R", "국가": "🇳🇱 네덜란드", "서킷 명칭": "잔트포르트 서킷", "도시": "잔트포르트", "결승 날짜": "2026. 08. 23"},
-    {"라운드": "13R", "국가": "🇮🇹 이탈리아", "서킷 명칭": "오토드로모 나치오날레 몬차", "도시": "몬차", "결승 날짜": "2026. 09. 06"},
-    {"라운드": "14R", "국가": "🇪🇸 스페인", "서킷 명칭": "마드리드 스트리트 서킷", "도시": "마드리드", "결승 날짜": "2026. 09. 13"},
-    {"라운드": "15R", "국가": "🇦🇿 아제르바이잔", "서킷 명칭": "바쿠 시티 서킷", "도시": "바쿠", "결승 날짜": "2026. 09. 26"},
-    {"라운드": "16R", "국가": "🇸🇬 싱가포르", "서킷 명칭": "마리나 베이 스트리트 서킷", "도시": "싱가포르", "결승 날짜": "2026. 10. 11"},
-    {"라운드": "17R", "국가": "🇺🇸 미국", "서킷 명칭": "서킷 오브 디 아메리카스", "도시": "오스틴", "결승 날짜": "2026. 10. 25"},
-    {"라운드": "18R", "국가": "🇲🇽 멕시코", "서킷 명칭": "오토드로모 에르마노스 로드리게스", "도시": "멕시코시티", "결승 날짜": "2026. 11. 01"},
-    {"라운드": "19R", "국가": "🇧🇷 브라질", "서킷 명칭": "호세 카를로스 파체 서킷 (인터라고스)", "도시": "상파울루", "결승 날짜": "2026. 11. 08"},
-    {"라운드": "20R", "국가": "🇺🇸 미국", "서킷 명칭": "라스베이거스 스트립 서킷", "도시": "라스베이거스", "결승 날짜": "2026. 11. 21"},
-    {"라운드": "21R", "국가": "🇶🇦 카타르", "서킷 명칭": "루사일 인터내셔널 서킷", "도시": "루사일", "결승 날짜": "2026. 11. 29"},
-    {"라운드": "22R", "국가": "🇦🇪 아랍에미리트", "서킷 명칭": "야스 마리나 서킷", "도시": "아부다비", "결승 날짜": "2026. 12. 06"}
+# 2026 경기 일정 및 포디움 기록 데이터
+f1_races_2026 = [
+    {
+        "round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷 (멜버른)", "date": "2026. 03. 08", "status": "완료",
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
+    },
+    {
+        "round": "2R", "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷 (상하이)", "date": "2026. 03. 15", "status": "완료",
+        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+    },
+    {
+        "round": "3R", "country": "🇯🇵 일본", "circuit": "스즈카 서킷 (스즈카)", "date": "2026. 03. 29", "status": "완료",
+        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
+    },
+    {
+        "round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 오토드로름 (마이애미)", "date": "2026. 05. 03", "status": "완료",
+        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
+    },
+    {
+        "round": "5R", "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브 (몬트리올)", "date": "2026. 05. 24", "status": "완료",
+        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 조지 러셀 (메르세데스)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
+    },
+    {
+        "round": "6R", "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코 (몬테카를로)", "date": "2026. 06. 07", "status": "완료",
+        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 발테리 보타스 (캐딜락)"}
+    },
+    {
+        "round": "7R", "country": "🇪🇸 스페인", "circuit": "서킷 드 바르셀로나-카탈루냐", "date": "2026. 06. 14", "status": "완료",
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 키미 안토넬리 (메르세데스)"}
+    },
+    {
+        "round": "8R", "country": "🇦🇹 오스트리아", "circuit": "레드불 링 (슈필베르크)", "date": "2026. 06. 28", "status": "완료",
+        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
+    },
+    {
+        "round": "9R", "country": "🇬🇧 영국", "circuit": "실버스톤 서킷 (실버스톤)", "date": "2026. 07. 05", "status": "완료",
+        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
+    },
+    {
+        "round": "10R", "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 (스파)", "date": "2026. 07. 19", "status": "완료",
+        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 세르히오 페레스 (캐딜락)"}
+    },
+    {
+        "round": "11R", "country": "🇭🇺 헝가리", "circuit": "헝가로링 (부다페스트)", "date": "2026. 07. 26", "status": "완료",
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 츠노다 유키 (레드불)"}
+    },
+    {
+        "round": "12R", "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷 (잔트포르트)", "date": "2026. 08. 23", "status": "완료",
+        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+    },
+    {
+        "round": "13R", "country": "🇮🇹 이탈리아", "circuit": "몬차 서킷 (몬차)", "date": "2026. 09. 06", "status": "예정", "podium": None},
+    {"round": "14R", "country": "🇪🇸 스페인 (마드리드)", "circuit": "마드리드 스트리트 서킷", "date": "2026. 09. 13", "status": "예정", "podium": None},
+    {"round": "15R", "country": "🇦🇿 아제르바이잔", "circuit": "바쿠 시티 서킷 (바쿠)", "date": "2026. 09. 26", "status": "예정", "podium": None},
+    {"round": "16R", "country": "🇸🇬 싱가포르", "circuit": "마리나 베이 서킷 (싱가포르)", "date": "2026. 10. 11", "status": "예정", "podium": None},
+    {"round": "17R", "country": "🇺🇸 미국 (오스틴)", "circuit": "서킷 오브 디 아메리카스", "date": "2026. 10. 25", "status": "예정", "podium": None},
+    {"round": "18R", "country": "🇲🇽 멕시코", "circuit": "에르마노스 로드리게스", "date": "2026. 11. 01", "status": "예정", "podium": None},
+    {"round": "19R", "country": "🇧🇷 브라질", "circuit": "인터라고스 서킷 (상파울루)", "date": "2026. 11. 08", "status": "예정", "podium": None},
+    {"round": "20R", "country": "🇺🇸 미국 (베이거스)", "circuit": "라스베이거스 스트립 서킷", "date": "2026. 11. 21", "status": "예정", "podium": None},
+    {"round": "21R", "country": "🇶🇦 카타르", "circuit": "루사일 인터내셔널 서킷", "date": "2026. 11. 29", "status": "예정", "podium": None},
+    {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷 (아부다비)", "date": "2026. 12. 06", "status": "예정", "podium": None}
 ]
 
 # 탭 메뉴 구성
-tab1, tab2 = st.tabs(["🏎️ F1 팀 & 드라이버", "📅 2026 경기 일정"])
+tab1, tab2 = st.tabs(["🏎️ F1 팀 & 드라이버", "📅 2026 경기 일정 및 포디움 결과"])
 
 # Tab 1: 팀 및 드라이버 정보
 with tab1:
@@ -149,7 +224,6 @@ with tab1:
 
     for team in f1_database:
         if team["team_kr"] == selected_team_name:
-            # 팀 상단 헤더 카드
             st.markdown(f"""
                 <div class="team-card" style="border-top: 5px solid {team['color']};">
                     <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
@@ -160,14 +234,12 @@ with tab1:
                 </div>
             """, unsafe_allow_html=True)
             
-            # 팀 소개글 (토글 열기)
             with st.expander(f"📖 {team['team_kr']} 팀 소개글 보기", expanded=True):
                 st.write(team["team_desc"])
             
             st.write("")
             st.subheader("🏎️ 소속 드라이버 라인업")
             
-            # 드라이버 카드를 Columns으로 배치
             cols = st.columns(len(team["drivers"]))
             for idx, driver in enumerate(team["drivers"]):
                 with cols[idx]:
@@ -175,29 +247,35 @@ with tab1:
                     st.caption(f"{driver['name_en']}")
                     st.write(f"**국적:** {driver['country']} | **생년월일:** {driver['birth']}")
                     
-                    # 드라이버 클릭 시 팝오버로 상세 설명 (4줄) 제공
                     with st.popover(f"🏎️ #{driver['number']} 상세 프로필 보기", use_container_width=True):
                         st.markdown(f"#### #{driver['number']} {driver['name_kr']} ({driver['name_en']})")
                         st.divider()
-                        # 줄바꿈 처리하여 4줄 분량 표현
                         for line in driver["desc"].split("\n"):
                             st.write(f"• {line}")
 
-# Tab 2: 일정표
+# Tab 2: 카드형 일정표 및 포디움 결과
 with tab2:
-    st.subheader("🏁 2026 FIA F1 월드 챔피언십 공식 일정표")
-    st.write("2026 시즌 개최되는 전체 그랑프리 일정입니다.")
-    
-    # 깔끔한 테이블 스타일링 적용
-    st.dataframe(
-        f1_schedule_2026,
-        use_container_width=True,
-        hide_index=True,
-        column_config={
-            "라운드": st.column_config.TextColumn("라운드", width="small"),
-            "국가": st.column_config.TextColumn("개최국", width="medium"),
-            "서킷 명칭": st.column_config.TextColumn("서킷 이름", width="large"),
-            "도시": st.column_config.TextColumn("도시", width="medium"),
-            "결승 날짜": st.column_config.TextColumn("결승일", width="medium"),
-        }
-    )
+    st.subheader("🏁 2026 FIA F1 그랑프리 일정 & 경기 결과")
+    st.caption("라운드별 일정과 이미 진행된 그랑프리의 TOP 3(포디움) 기록입니다.")
+    st.write("")
+
+    # 카드 형태로 간격을 떨어뜨려서 시각적으로 표현
+    for race in f1_races_2026:
+        with st.container():
+            col1, col2 = st.columns([1, 2])
+            
+            with col1:
+                st.markdown(f"### **{race['round']} - {race['country']}**")
+                st.write(f"📍 **서킷:** {race['circuit']}")
+                st.write(f"📅 **결승일:** {race['date']}")
+            
+            with col2:
+                if race["status"] == "완료" and race["podium"]:
+                    st.markdown("##### 🏆 **포디움 (1, 2, 3위)**")
+                    st.write(f"{race['podium']['1st']}")
+                    st.write(f"{race['podium']['2nd']}")
+                    st.write(f"{race['podium']['3rd']}")
+                else:
+                    st.info("⏳ 경기 예정 (결과 미정)")
+            
+            st.divider()  # 카드 간의 구분을 위한 경계선
