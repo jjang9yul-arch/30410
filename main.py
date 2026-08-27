@@ -23,16 +23,6 @@ st.markdown("""
         padding-bottom: 2rem !important;
     }
 
-    /* 상단 헤더 컨테이너 (로고와 탭 메뉴를 한 줄에 배치) */
-    .f1-top-layout {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-top: -10px;
-        margin-bottom: 5px;
-        padding: 0 10px;
-    }
-
     /* F1 로고 가로세로 비율 유지하며 큼직하게 확대 */
     .f1-logo-img {
         width: 100%;
@@ -121,6 +111,15 @@ st.markdown("""
         border-radius: 10px;
         padding: 15px;
         margin-top: 15px;
+    }
+    
+    /* 레이스 카드 스타일 */
+    .race-card {
+        background: rgba(18, 23, 33, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 18px;
+        margin-bottom: 15px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -236,7 +235,7 @@ f1_races_2026 = [
 if "selected_driver" not in st.session_state:
     st.session_state.selected_driver = None
 
-# [상단 배치] 비율이 맞도록 넉넉하게 키운 로고와 카테고리(탭)를 한 줄에 나란히 배치
+# [상단 배치] 큼직해진 로고와 카테고리(탭) 3개를 한 줄에 나란히 배치
 col_logo, col_tabs = st.columns([1.3, 3.7])
 
 with col_logo:
@@ -247,15 +246,18 @@ with col_logo:
     """, unsafe_allow_html=True)
 
 with col_tabs:
-    tab1, tab2 = st.tabs(["🔍 F1 팀 검색 및 선수 정보", "📅 2026 그랑프리 일정 & 포디움"])
+    tab1, tab2, tab3 = st.tabs([
+        "🔍 F1 팀 & 선수 정보", 
+        "📅 2026 그랑프리 전체 일정", 
+        "🏆 완료된 경기 포디움 결과"
+    ])
 
 # F1 시그니처 빨간 선
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
 
-# [탭 1] 팀 검색 및 선수 선택 기능 (2단 레이아웃)
+# [탭 1] 팀 검색 및 선수 선택 기능
 with tab1:
     st.write("")
-    
     main_col, side_col = st.columns([2.2, 1.8])
     
     with main_col:
@@ -323,25 +325,48 @@ with tab1:
         """, unsafe_allow_html=True)
         st.progress(progress_val)
 
-# [탭 2] 2026 그랑프리 일정표 및 포디움 결과
+# [탭 2] 2026 전체 그랑프리 일정표
 with tab2:
     st.write("")
+    st.markdown("### 📅 2026 시즌 전체 그랑프리 캘린더")
+    st.write("2026년 진행되는 모든 그랑프리의 일정과 개최 장소를 확인하실 수 있습니다.")
+    st.write("")
+    
     for race in f1_races_2026:
-        with st.container():
-            col_info, col_podium = st.columns([1.2, 1.8])
-            
-            with col_info:
-                st.markdown(f"### **{race['round']} - {race['country']}**")
-                st.write(f"📍 **서킷:** {race['circuit']}")
-                st.write(f"📅 **일정:** {race['date']}")
-                st.write(f"📌 **상태:** {'✅ 경기 완료' if race['status'] == '완료' else '⏳ 레이스 예정'}")
-            
-            with col_podium:
-                if race["status"] == "완료" and len(race["podium"]) > 0:
-                    st.markdown("##### 🏆 **포디움 (TOP 3 결과)**")
-                    for p in race["podium"]:
-                        st.markdown(f"- {p}")
-                else:
-                    st.info("아직 진행되지 않은 다가오는 그랑프리 경기입니다.")
-            
-            st.markdown("---")
+        status_color = "#27F4D2" if race['status'] == '완료' else "#ff9900"
+        status_text = "✅ 경기 완료" if race['status'] == '완료' else "⏳ 레이스 예정"
+        
+        st.markdown(f"""
+            <div class="race-card">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: bold; color: #ff3333;">{race['round']}</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; color: {status_color}; font-weight: bold;">{status_text}</span>
+                </div>
+                <h3 style="margin: 8px 0 4px 0;">{race['country']}</h3>
+                <p style="margin: 0; color: #94a3b8; font-size: 0.95rem;">📍 {race['circuit']} &nbsp;|&nbsp; 📅 {race['date']}</p>
+            </div>
+        """, unsafe_allow_html=True)
+
+# [탭 3] 완료된 경기 포디움 결과 모음
+with tab3:
+    st.write("")
+    st.markdown("### 🏆 지금까지 완료된 그랑프리 포디움 (TOP 3)")
+    st.write("시즌 개막부터 최근 경기까지 포디움에 오른 드라이버 기록입니다.")
+    st.write("")
+    
+    completed_list = [r for r in f1_races_2026 if r["status"] == "완료"]
+    
+    for race in completed_list:
+        podium_str = "<br>".join([f"• {p}" for p in race["podium"]])
+        st.markdown(f"""
+            <div class="race-card" style="border-left: 4px solid #e10600;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold; color: #ff3333;">{race['round']} - {race['country']}</span>
+                    <span style="color: #94a3b8; font-size: 0.9rem;">{race['date']}</span>
+                </div>
+                <p style="margin: 6px 0 10px 0; color: #cbd5e1; font-size: 0.9rem;">📍 {race['circuit']}</p>
+                <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; font-size: 1rem; line-height: 1.6;">
+                    {podium_str}
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
