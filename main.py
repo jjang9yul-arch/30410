@@ -463,3 +463,46 @@ else:
                     st.info(driver["desc"])
 
         st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 25px 0;'>", unsafe_allow_html=True)
+        # Streamlit 앱용 2026 F1 일정 데이터 세트
+f1_schedule_2026 = [
+    {"round": 1, "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷", "city": "멜버른", "date": "2026. 03. 08"},
+    {"round": 2, "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷", "city": "상하이", "date": "2026. 03. 15"},
+    {"round": 3, "country": "🇯🇵 일본", "circuit": "스즈카 서킷", "city": "스즈카", "date": "2026. 03. 29"},
+    {"round": 4, "country": "🇺🇸 미국", "circuit": "마이애미 인터내셔널 오토드로름", "city": "마이애미", "date": "2026. 05. 03"},
+    {"round": 5, "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브", "city": "몬트리올", "date": "2026. 05. 24"},
+    {"round": 6, "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코", "city": "몬테카를로", "date": "2026. 06. 07"},
+    {"round": 7, "country": "🇪🇸 스페인", "circuit": "서킷 드 바르셀로나-카탈루냐", "city": "바르셀로나", "date": "2026. 06. 14"},
+    {"round": 8, "country": "🇦🇹 오스트리아", "circuit": "레드불 링", "city": "슈필베르크", "date": "2026. 06. 28"},
+    {"round": 9, "country": "🇬🇧 영국", "circuit": "실버스톤 서킷", "city": "실버스톤", "date": "2026. 07. 05"},
+    {"round": 10, "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 서킷", "city": "스파", "date": "2026. 07. 19"},
+    {"round": 11, "country": "🇭🇺 헝가리", "circuit": "헝가로링", "city": "부다페스트", "date": "2026. 07. 26"},
+    {"round": 12, "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷", "city": "잔트포르트", "date": "2026. 08. 23"},
+    {"round": 13, "country": "🇮🇹 이탈리아", "circuit": "오토드로모 나치오날레 몬차", "city": "몬차", "date": "2026. 09. 06"},
+    {"round": 14, "country": "🇪🇸 스페인", "circuit": "마드리드 스트리트 서킷", "city": "마드리드", "date": "2026. 09. 13"},
+    {"round": 15, "country": "🇦🇿 아제르바이잔", "circuit": "바쿠 시티 서킷", "city": "바쿠", "date": "2026. 09. 26"},
+    {"round": 16, "country": "🇸🇬 싱가포르", "circuit": "마리나 베이 스트리트 서킷", "city": "싱가포르", "date": "2026. 10. 11"},
+    {"round": 17, "country": "🇺🇸 미국", "circuit": "서킷 오브 디 아메리카스", "city": "오스틴", "date": "2026. 10. 25"},
+    {"round": 18, "country": "🇲🇽 멕시코", "circuit": "오토드로모 에르마노스 로드리게스", "city": "멕시코시티", "date": "2026. 11. 01"},
+    {"round": 19, "country": "🇧🇷 브라질", "circuit": "호세 카를로스 파체 서킷 (인터라고스)", "city": "상파울루", "date": "2026. 11. 08"},
+    {"round": 20, "country": "🇺🇸 미국", "circuit": "라스베이거스 스트립 서킷", "city": "라스베이거스", "date": "2026. 11. 21"},
+    {"round": 21, "country": "🇶🇦 카타르", "circuit": "루사일 인터내셔널 서킷", "city": "루사일", "date": "2026. 11. 29"},
+    {"round": 22, "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷", "city": "아부다비", "date": "2026. 12. 06"}
+]
+
+# Streamlit에 표 형태로 출력하기
+import streamlit as st
+import pandas as pd
+
+st.title("🏎️ 2026 F1 그랑프리 일정표")
+df_schedule = pd.DataFrame(f1_schedule_2026)
+st.dataframe(
+    df_schedule.rename(columns={
+        "round": "라운드", 
+        "country": "국가", 
+        "circuit": "서킷 명칭", 
+        "city": "도시", 
+        "date": "결승 날짜"
+    }), 
+    use_container_width=True,
+    hide_index=True
+)
