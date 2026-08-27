@@ -17,31 +17,19 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* 상단 Flow / 헤더 영역 (F1 로고 + 원본 타이틀) */
+    /* 상단 F1 로고 전용 헤더 영역 (크기 확대 적용) */
     .f1-header-container {
         display: flex;
-        flex-direction: column;
-        align-items: center;
         justify-content: center;
-        padding: 20px 0 25px 0;
+        align-items: center;
+        padding: 30px 0;
         border-bottom: 2px solid rgba(225, 6, 0, 0.4);
-        margin-bottom: 30px;
+        margin-bottom: 35px;
     }
 
     .f1-logo-img {
-        width: 150px;
-        filter: drop-shadow(0px 0px 12px rgba(225, 6, 0, 0.8));
-        margin-bottom: 12px;
-    }
-
-    .f1-logo-text {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 2.3rem;
-        font-weight: 900;
-        letter-spacing: 2px;
-        background: linear-gradient(90deg, #ffffff, #e10600);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        width: 280px; /* 로고 크기 대폭 확대 */
+        filter: drop-shadow(0px 0px 20px rgba(225, 6, 0, 0.85));
     }
 
     /* 팀 카드 스타일 */
@@ -74,11 +62,10 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 헤더 영역 (원래 요구하신 로고 + GRID & DRIVER VAULT 스타일)
+# 1. 헤더 영역 (텍스트 제거 및 대형 F1 로고만 단독 배치)
 st.markdown("""
     <div class="f1-header-container">
         <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
-        <div class="f1-logo-text">GRID & DRIVER VAULT</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -136,7 +123,7 @@ f1_database = [
     }
 ]
 
-# 2026 시즌 실제 그랑프리 경기 결과 반영 (1R ~ 12R 공식 경기 결과)
+# 2026 시즌 경기 일정 및 포디움 결과
 f1_races_2026 = [
     {
         "round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷", "date": "2026. 03. 08", "status": "완료",
@@ -237,7 +224,7 @@ with tab1:
                         for line in driver["desc"].split("\n"):
                             st.write(f"• {line}")
 
-# Tab 2: 넓은 간격의 카드형 일정표 및 실제 포디움 결과
+# Tab 2: 카드형 일정표 및 포디움 결과
 with tab2:
     st.subheader("🏁 2026 FIA F1 그랑프리 일정 & 경기 결과")
     st.caption("라운드별 일정과 현재까지 진행된 경기 포디움(1·2·3위) 결과입니다.")
@@ -261,4 +248,4 @@ with tab2:
                 else:
                     st.info("⏳ 경기 예정 (결과 미정)")
             
-            st.divider()  # 카드 간격을 충분히 띄워주기 위한 분리선
+            st.divider()
