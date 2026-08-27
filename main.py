@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS - 상단 공백 제거, 로고 비율 유지 확대, 탭 메뉴 디자인
+# Custom CSS - 상단 공백 제거, 로고 비율 유지 확대, 카드 디자인
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -192,7 +192,7 @@ f1_teams_database = [
     {
         "team_en": "Cadillac F1 Team", "team_kr": "캐딜락 F1 팀", "color": "#FFD700", "principal": "Graeme Lowdon", "power_unit": "Ferrari",
         "drivers": [
-            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 🇫🇮", "birth": "1989.08.28", "story": "풍부한 우승 경력과 방대한 머신 개발 데이터를 지닌 베테랑 드라이버입니다."},
+            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 핀란드 🇫🇮", "birth": "1989.08.28", "story": "풍부한 우승 경력과 방대한 머신 개발 데이터를 지닌 베테랑 드라이버입니다."},
             {"name_en": "Sergio Pérez", "name_kr": "세르히오 페레스", "number": "11", "country": "멕시코 🇲🇽", "birth": "1990.01.26", "story": "시가지 서킷에서 특히 강한 면모를 보이며 타이어 관리 능력이 뛰어납니다."}
         ]
     }
@@ -227,7 +227,7 @@ f1_races_2026 = [
 if "selected_driver" not in st.session_state:
     st.session_state.selected_driver = None
 
-# 상단 로고 및 3개의 탭 배치
+# 상단 로고 및 탭 배치 (기본 기능 유지)
 col_logo, col_tabs = st.columns([1.3, 3.7])
 
 with col_logo:
@@ -238,15 +238,14 @@ with col_logo:
     """, unsafe_allow_html=True)
 
 with col_tabs:
-    tab1, tab2, tab3 = st.tabs([
+    tab1, tab2 = st.tabs([
         "🔍 F1 팀 & 선수 정보", 
-        "📅 2026 전체 일정표", 
-        "🏆 완료된 경기 포디움"
+        "ℹ️ 시즌 소개"
     ])
 
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
 
-# [탭 1] 팀 & 선수 정보
+# [탭 1] 기존 팀 & 선수 정보 화면
 with tab1:
     st.write("")
     main_col, side_col = st.columns([2.2, 1.8])
@@ -316,47 +315,54 @@ with tab1:
         """, unsafe_allow_html=True)
         st.progress(progress_val)
 
-# [탭 2] 2026 전체 일정표
+# [탭 2] 간단한 시즌 소개
 with tab2:
     st.write("")
-    st.markdown("### 📅 2026 시즌 전체 그랑프리 일정")
-    st.write("2026년 진행되는 모든 그랑프리의 라운드와 개최 장소, 일정을 보여줍니다.")
-    st.write("")
-    
+    st.markdown("### 🏎️ 2026 FIA 포뮬러 원 월드 챔피언십")
+    st.write("2026년은 새로운 엔진 규정과 11개의 컨스트럭터가 격돌하는 대변혁의 시즌입니다.")
+
+# ==========================================
+# ⬇️ 요청하신 부분: 아래 빈 곳에 배치된 전체 일정표 & 포디움 결과
+# ==========================================
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
+st.markdown("## 📅 2026 시즌 전체 그랑프리 일정표 및 포디움 결과")
+st.write("지금까지 완료된 경기의 포디움(TOP 3) 기록과 다가오는 전체 레이스 일정을 확인하세요.")
+st.write("")
+
+# 2단 레이아웃으로 좌측: 전체 일정표 / 우측: 완료된 경기 포디움 결과
+schedule_col, podium_col = st.columns(2)
+
+with schedule_col:
+    st.markdown("### 🗓️ 전체 레이스 캘린더")
     for race in f1_races_2026:
         status_color = "#27F4D2" if race['status'] == '완료' else "#ff9900"
-        status_text = "✅ 경기 완료" if race['status'] == '완료' else "⏳ 레이스 예정"
+        status_text = "✅ 완료" if race['status'] == '완료' else "⏳ 예정"
         
         st.markdown(f"""
-            <div class="race-card">
+            <div class="race-card" style="padding: 12px 15px; margin-bottom: 10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: bold; color: #ff3333;">{race['round']}</span>
-                    <span style="background: rgba(255,255,255,0.1); padding: 3px 10px; border-radius: 12px; font-size: 0.85rem; color: {status_color}; font-weight: bold;">{status_text}</span>
+                    <span style="font-family: 'Orbitron', sans-serif; font-size: 1rem; font-weight: bold; color: #ff3333;">{race['round']}</span>
+                    <span style="background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; color: {status_color}; font-weight: bold;">{status_text}</span>
                 </div>
-                <h3 style="margin: 8px 0 4px 0;">{race['country']}</h3>
-                <p style="margin: 0; color: #94a3b8; font-size: 0.95rem;">📍 {race['circuit']} &nbsp;|&nbsp; 📅 {race['date']}</p>
+                <h4 style="margin: 4px 0 2px 0; font-size: 1.05rem;">{race['country']}</h4>
+                <p style="margin: 0; color: #94a3b8; font-size: 0.85rem;">📍 {race['circuit']} | 📅 {race['date']}</p>
             </div>
         """, unsafe_allow_html=True)
 
-# [탭 3] 완료된 경기 포디움 결과
-with tab3:
-    st.write("")
-    st.markdown("### 🏆 지금까지 완료된 경기 포디움 결과")
-    st.write("시즌 개막부터 최근 경기까지 포디움(TOP 3)에 오른 드라이버 기록입니다.")
-    st.write("")
-    
+with podium_col:
+    st.markdown("### 🏆 완료된 경기 포디움 (TOP 3)")
     completed_list = [r for r in f1_races_2026 if r["status"] == "완료"]
     
     for race in completed_list:
         podium_str = "<br>".join([f"• {p}" for p in race["podium"]])
         st.markdown(f"""
-            <div class="race-card" style="border-left: 4px solid #e10600;">
+            <div class="race-card" style="border-left: 4px solid #e10600; padding: 12px 15px; margin-bottom: 10px;">
                 <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span style="font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: bold; color: #ff3333;">{race['round']} - {race['country']}</span>
-                    <span style="color: #94a3b8; font-size: 0.9rem;">{race['date']}</span>
+                    <span style="font-family: 'Orbitron', sans-serif; font-size: 0.95rem; font-weight: bold; color: #ff3333;">{race['round']} - {race['country']}</span>
+                    <span style="color: #94a3b8; font-size: 0.8rem;">{race['date']}</span>
                 </div>
-                <p style="margin: 6px 0 10px 0; color: #cbd5e1; font-size: 0.9rem;">📍 {race['circuit']}</p>
-                <div style="background: rgba(0,0,0,0.3); padding: 10px 15px; border-radius: 8px; font-size: 1rem; line-height: 1.6;">
+                <div style="background: rgba(0,0,0,0.3); padding: 8px 12px; border-radius: 6px; font-size: 0.9rem; line-height: 1.5; margin-top: 6px;">
                     {podium_str}
                 </div>
             </div>
