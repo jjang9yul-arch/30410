@@ -1,388 +1,308 @@
 import streamlit as st
 
-# 1. 페이지 설정
+# 페이지 기본 설정
 st.set_page_config(
-    page_title="🏎️ F1ow",
+    page_title="F1 Grid & Driver Vault",
     page_icon="🏎️",
     layout="wide"
 )
 
-# 다크 모드 및 글씨 색상 흰색(White) 강제 적용 CSS
+# Custom CSS (F1 레이싱 테마 + 로고 애니메이션 및 카드 스타일)
 st.markdown("""
     <style>
-    /* 전체 글꼴 색상을 흰색으로 기본 설정 */
-    html, body, [class*="css"], .stMarkdown, p, div, span, label {
-        color: #FFFFFF !important;
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
+
+    /* 전체 배경 */
+    .stApp {
+        background: linear-gradient(135deg, #0b0e14 0%, #151a24 50%, #05070a 100%);
+        color: #f3f4f6;
+        font-family: 'Noto Sans KR', sans-serif;
     }
-    
-    /* 메인 로고 타이틀 F1ow */
-    .main-title {
-        color: #E10600 !important;
-        font-size: 3.5rem;
-        font-weight: 900;
-        text-align: center;
-        margin-bottom: 25px;
-        letter-spacing: 2px;
-        text-shadow: 0px 2px 10px rgba(225, 6, 0, 0.5);
-    }
-    
-    /* 서브 타이틀 */
-    .sub-title {
-        color: #FFFFFF !important;
-        border-left: 5px solid #E10600;
-        padding-left: 12px;
-        font-size: 1.6rem;
-        font-weight: bold;
-        margin-top: 10px;
-        margin-bottom: 20px;
-    }
-    
-    /* 팀 정보 카드 박스 */
-    .team-info-box {
-        background-color: #1a1d24;
-        padding: 20px;
-        border-radius: 12px;
-        border: 1px solid #333a46;
-        margin-top: 15px;
-    }
-    
-    /* 팀 로고 컨테이너 (흰색 배경으로 검은색 로고도 잘 보이게 처리) */
-    .logo-container {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 12px;
+
+    /* 상단 Flow / 헤더 영역 (F1 로고 포함) */
+    .f1-header-container {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        justify-content: center;
+        padding: 20px 0 30px 0;
+        border-bottom: 2px solid rgba(225, 6, 0, 0.4);
+        margin-bottom: 30px;
+    }
+
+    .f1-logo-img {
+        width: 160px;
+        filter: drop-shadow(0px 0px 15px rgba(225, 6, 0, 0.8));
         margin-bottom: 15px;
     }
-    
-    /* 레이스 일정 카드 */
-    .schedule-card {
-        background-color: #21252d;
-        padding: 16px;
-        border-radius: 10px;
-        margin-bottom: 12px;
-        border-left: 4px solid #E10600;
-        border-top: 1px solid #2d323e;
-        border-right: 1px solid #2d323e;
-        border-bottom: 1px solid #2d323e;
+
+    .f1-logo-text {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 900;
+        letter-spacing: 3px;
+        background: linear-gradient(90deg, #ffffff, #e10600);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
-    
-    /* 셀렉트박스 글씨색 흰색 조정 */
-    .stSelectbox label {
-        color: #FFFFFF !important;
-        font-size: 1.1rem;
+
+    /* 팀 카드 */
+    .team-card {
+        background: rgba(21, 26, 36, 0.85);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 20px 24px;
+        margin-bottom: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .team-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    /* 드라이버 카드 */
+    .driver-card {
+        background: rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 14px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .driver-number {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 900;
+        color: #e10600;
+        line-height: 1;
+        min-width: 55px;
+    }
+
+    .driver-name {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #ffffff;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        background: rgba(225, 6, 0, 0.2);
+        border: 1px solid rgba(225, 6, 0, 0.5);
+        color: #ff4d4d;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-right: 8px;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. F1 전체 10개 팀 데이터 (안정된 로고 이미지 URL 및 흰색 글씨용 구조)
-F1_TEAMS = {
-    "레드불 (Red Bull Racing)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/redbull.png",
-        "founded": "2005년",
-        "base": "영국 밀턴킨스",
-        "features": "에어로다이내믹스 거장 에드리언 뉴이의 디자인 유산과 막강한 레이스 파워트레인을 바탕으로 2010년대 및 2020년대 초반 F1을 지배한 최고 명문 팀 중 하나입니다.",
+# 2026 최신 데이터베이스 (Lando Norris #1 반영 및 안정적인 고화질 사진 주소 사용)
+f1_database = [
+    {
+        "team_en": "McLaren Formula 1 Team",
+        "team_kr": "맥라렌",
+        "search_keywords": ["맥라렌", "mclaren", "노리스", "랜도", "피아스트리", "1", "1번"],
+        "color": "#FF8000",
+        "principal": "Andrea Stella",
+        "power_unit": "Mercedes",
+        "car_img": "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1000&auto=format&fit=crop",
         "drivers": [
             {
-                "name": "막스 페르스타펜 (Max Verstappen)",
-                "no": "1",
-                "country": "🇳🇱 네덜란드",
-                "bio": "F1 월드 챔피언 출신으로 역대 최연소 F1 데뷔 및 최연소 그랑프리 우승 기록을 보유한 압도적인 드라이빙 테크닉의 소유자입니다."
+                "name_en": "Lando Norris",
+                "name_kr": "랜도 노리스",
+                "number": "1",  # 챔피언 등극으로 1번 사용
+                "country": "🇬🇧 United Kingdom",
+                "role": "월드 챔피언 (World Champion)",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Lando_Norris_2019.jpg/800px-Lando_Norris_2019.jpg",
+                "desc": "디펜딩 월드 챔피언. 기존 #4번 대신 챔피언의 권리인 #1번을 달고 그리드를 지배 중."
             },
             {
-                "name": "이삭 하드자르 (Isack Hadjar)",
-                "no": "6",
-                "country": "🇫🇷 프랑스",
-                "bio": "레드불 주니어 프로그램 출신의 신예 드라이버로, F2 및 하위 카테고리에서 공격적인 레이스를 선보이며 주목받은 차세대 인재입니다."
+                "name_en": "Oscar Piastri",
+                "name_kr": "오스카 피아스트리",
+                "number": "81",
+                "country": "🇦🇺 Australia",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/Oscar_Piastri_2023.jpg/800px-Oscar_Piastri_2023.jpg",
+                "desc": "맥라렌의 강력한 듀얼 에이스. 완벽한 냉정함과 폭발적인 스피드를 겸비한 드라이버."
             }
         ]
     },
-    "페라리 (Scuderia Ferrari)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/ferrari.png",
-        "founded": "1929년 (F1 참가: 1950년)",
-        "base": "이탈리아 마라넬로",
-        "features": "F1 출범 첫해인 1950년부터 단 한 번도 빠짐없이 참가한 가장 오래되고 가장 성공적인 F1의 상징적인 명문 붉은 전차 팀입니다.",
+    {
+        "team_en": "Scuderia Ferrari",
+        "team_kr": "스크루데리아 페라리",
+        "search_keywords": ["페라리", "ferrari", "샤를", "르클레르", "해밀턴", "루이스"],
+        "color": "#E8002d",
+        "principal": "Frédéric Vasseur",
+        "power_unit": "Ferrari",
+        "car_img": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?q=80&w=1000&auto=format&fit=crop",
         "drivers": [
             {
-                "name": "샤를 르클레르 (Charles Leclerc)",
-                "no": "16",
-                "country": "🇲🇨 모나코",
-                "bio": "페라리의 성골 드라이버이자 모나코 국적의 탑 클래스 레이서. 퀄리파잉(예선)에서 독보적인 원랩 스피드를 자랑합니다."
+                "name_en": "Charles Leclerc",
+                "name_kr": "샤를 르클레르",
+                "number": "16",
+                "country": "🇲🇨 Monaco",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Charles_Leclerc_2022.jpg/800px-Charles_Leclerc_2022.jpg",
+                "desc": "페라리의 성골 에이스. 폴 포지션 타임의 마술사이자 붉은 제국의 핵심."
             },
             {
-                "name": "루이스 해밀턴 (Lewis Hamilton)",
-                "no": "44",
-                "country": "🇬🇧 영국",
-                "bio": "F1 통산 7회 월드 챔피언 및 역대 최다 우승/폴포지션 기록을 보유한 살아있는 전설. 페라리로 이적하며 큰 화제를 모았습니다."
+                "name_en": "Lewis Hamilton",
+                "name_kr": "루이스 해밀턴",
+                "number": "44",
+                "country": "🇬🇧 United Kingdom",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Lewis_Hamilton_2022_At_Silverstone.jpg/800px-Lewis_Hamilton_2022_At_Silverstone.jpg",
+                "desc": "7회 월드 챔피언. 페라리 레드 슈트를 입고 8번째 타이틀을 향해 달리는 레이싱 전설."
             }
         ]
     },
-    "맥라렌 (McLaren F1 Team)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/mclaren.png",
-        "founded": "1963년",
-        "base": "영국 워킹",
-        "features": "아일톤 세나, 알랭 프로스트 등 수많은 전설을 배출한 F1 역사의 명가. 최근 유려한 섀시 개발로 다시 정상권 경쟁에 진입했습니다.",
+    {
+        "team_en": "Oracle Red Bull Racing",
+        "team_kr": "레드불 레이싱",
+        "search_keywords": ["레드불", "redbull", "red bull", "막스", "베르스타펜", "페르스타펜", "츠노다"],
+        "color": "#3671C6",
+        "principal": "Christian Horner",
+        "power_unit": "Honda RBPT",
+        "car_img": "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=1000&auto=format&fit=crop",
         "drivers": [
             {
-                "name": "랜도 노리스 (Lando Norris)",
-                "no": "4",
-                "country": "🇬🇧 영국",
-                "bio": "맥라렌의 프랜차이즈 스타로, 일관된 페이스와 안정적인 주행 능력으로 차세대 챔피언 후보로 꼽힙니다."
+                "name_en": "Max Verstappen",
+                "name_kr": "막스 베르스타펜",
+                "number": "33",  # #1번 내려놓고 원래 번호 #33 복귀
+                "country": "🇳🇱 Netherlands",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Max_Verstappen_2017_Malaysia.jpg/800px-Max_Verstappen_2017_Malaysia.jpg",
+                "desc": "챔피언의 상징 #1 대신 고유 번호 #33으로 탈환에 나선 천재 드라이버."
             },
             {
-                "name": "오스카 피아스트리 (Oscar Piastri)",
-                "no": "81",
-                "country": "🇦🇺 호주",
-                "bio": "F3, F2를 연속 제패하고 F1에 화려하게 데뷔한 침착하고 대담한 레이스운영 능력을 갖춘 슈퍼 루키 출신입니다."
+                "name_en": "Yuki Tsunoda",
+                "name_kr": "츠노다 유키",
+                "number": "22",
+                "country": "🇯🇵 Japan",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/Yuki_Tsunoda_2021_AISC.jpg/800px-Yuki_Tsunoda_2021_AISC.jpg",
+                "desc": "공격적인 오버테이킹 실력과 압도적인 배짱을 보여주는 드라이버."
             }
         ]
     },
-    "메르세데스 (Mercedes-AMG F1)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/mercedes.png",
-        "founded": "1954년 (재창단: 2010년)",
-        "base": "영국 브랙리",
-        "features": "터보 하이브리드 시대(2014~2021)에 8년 연속 컨스트럭터 챔피언이라는 전무후무한 대기록을 작성한 최첨단 엔지니어링의 정점 팀입니다.",
+    {
+        "team_en": "Mercedes-AMG Petronas F1 Team",
+        "team_kr": "메르세데스 AMG",
+        "search_keywords": ["메르세데스", "mercedes", "벤츠", "러셀", "안토넬리"],
+        "color": "#27F4D2",
+        "principal": "Toto Wolff",
+        "power_unit": "Mercedes",
+        "car_img": "https://images.unsplash.com/photo-1618843479313-40f8afb4b4d8?q=80&w=1000&auto=format&fit=crop",
         "drivers": [
             {
-                "name": "조지 러셀 (George Russell)",
-                "no": "63",
-                "country": "🇬🇧 영국",
-                "bio": "메르세데스 유스 출신으로 빠른 속도 판단력과 단단한 주행법으로 메르세데스의 새로운 리더 역할을 수행하고 있습니다."
+                "name_en": "George Russell",
+                "name_kr": "조지 러셀",
+                "number": "63",
+                "country": "🇬🇧 United Kingdom",
+                "role": "메인 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/George_Russell_2019.jpg/800px-George_Russell_2019.jpg",
+                "desc": "메르세데스 레이싱의 중심축이자 안정적인 페이스 조절의 일인자."
             },
             {
-                "name": "키미 안토넬리 (Andrea Kimi Antonelli)",
-                "no": "12",
-                "country": "🇮🇹 이탈리아",
-                "bio": "이탈리아 출신의 초신성 유망주로, 하위 카테고리를 폭속으로 스킵하며 메르세데스 메인 시트를 꿰찬 천재 드라이버입니다."
-            }
-        ]
-    },
-    "애스턴 마틴 (Aston Martin)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/astonmartin.png",
-        "founded": "2021년 (전신: 포스인디아/레이싱포인트)",
-        "base": "영국 실버스톤",
-        "features": "영국의 럭셔리 스포츠카 브랜드를 바탕으로 최신 시설의 신규 풍동과 공장을 건설하며 정상권을 목표로 공격적인 투자를 진행 중입니다.",
-        "drivers": [
-            {
-                "name": "페르난도 알론소 (Fernando Alonso)",
-                "no": "14",
-                "country": "🇪🇸 스페인",
-                "bio": "2회 월드 챔피언이자 F1 베테랑. 철저한 관리와 풍부한 경험을 바탕으로 노련하고 뛰어난 레이스 운용을 보여줍니다."
-            },
-            {
-                "name": "랜스 스트롤 (Lance Stroll)",
-                "no": "18",
-                "country": "🇨🇦 캐나다",
-                "bio": "빗길 레이스(Wet Race) 및 스타트 상황에서 깜짝 활약을 보여주는 애스턴 마틴의 주축 드라이버입니다."
-            }
-        ]
-    },
-    "알핀 (Alpine F1 Team)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/alpine.png",
-        "founded": "2021년 (전신: 르노 F1)",
-        "base": "영국 엔스톤 / 프랑스 비리샤티용",
-        "features": "프랑스 르노 그룹의 스포츠카 브랜드 알핀을 대표하며, 견고한 워크스 팀의 인프라를 지니고 있습니다.",
-        "drivers": [
-            {
-                "name": "피에르 가스리 (Pierre Gasly)",
-                "no": "10",
-                "country": "🇫🇷 프랑스",
-                "bio": "2020 이탈리아 GP 우승 경험이 있는 프랑스의 자존심 드라이버. 날카로운 추월 스킬이 장점입니다."
-            },
-            {
-                "name": "프랑코 콜라핀토 (Franco Colapinto)",
-                "no": "43",
-                "country": "🇦🇷 아르헨티나",
-                "bio": "남미 출신의 열정적인 레이서로 뛰어난 적응력과 승부욕을 통해 F1 무대에서 유망한 모습을 보여주고 있습니다."
-            }
-        ]
-    },
-    "윌리엄스 (Williams Racing)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/williams.png",
-        "founded": "1977년",
-        "base": "영국 그로브",
-        "features": "프랭크 윌리엄스 경에 의해 설립된 전통의 레이싱 전설 팀. 다수의 챔피언십 타이틀을 보유하고 있으며 재건을 도모하고 있습니다.",
-        "drivers": [
-            {
-                "name": "알렉산더 알본 (Alexander Albon)",
-                "no": "23",
-                "country": "🇹🇭 태국",
-                "bio": "윌리엄스의 에이스로 뛰어난 타이어 관리 능력과 한계를 끌어내는 정교한 주행으로 팀의 포인트를 끌어올립니다."
-            },
-            {
-                "name": "카를로스 사인츠 (Carlos Sainz)",
-                "no": "55",
-                "country": "🇪🇸 스페인",
-                "bio": "페라리를 거쳐 윌리엄스에 합류한 베테랑. 뛰어난 엔지니어링 이해도와 명석한 레이스 전략 분석력이 강점입니다."
-            }
-        ]
-    },
-    "하스 (Haas F1 Team)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/haas.png",
-        "founded": "2016년",
-        "base": "미국 카나폴리스",
-        "features": "미국 자본으로 설립된 팀으로, 효율적인 운영 방식과 페라리와의 파트너십을 통해 중위권 싸움에서 효율성을 극대화합니다.",
-        "drivers": [
-            {
-                "name": "에스테반 오콘 (Esteban Ocon)",
-                "no": "31",
-                "country": "🇫🇷 프랑스",
-                "bio": "단단한 수비 주행과 강한 멘탈을 지닌 드라이버로, 2021 헝가리 GP에서 커리어 첫 우승을 기록한 바 있습니다."
-            },
-            {
-                "name": "올리버 베어먼 (Oliver Bearman)",
-                "no": "87",
-                "country": "🇬🇧 영국",
-                "bio": "페라리 드라이버 아카데미 출신으로 긴급 대타 출전에서도 포인트를 획득하며 정식 시트를 확보한 영건입니다."
-            }
-        ]
-    },
-    "레이싱 불스 (RB)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/rb.png",
-        "founded": "2006년 (전신: 토로로소 / 알파타우리)",
-        "base": "이탈리아 파엔차",
-        "features": "레드불 레이싱의 자매 팀 역할을 하며 신예 드라이버들을 육성하고 빠른 스피드를 검증하는 이탈리아 기반의 팀입니다.",
-        "drivers": [
-            {
-                "name": "리암 로슨 (Liam Lawson)",
-                "no": "30",
-                "country": "🇳🇿 뉴질랜드",
-                "bio": "대타 출전 시기마다 강렬한 임팩트를 남기며 정식 시트를 차지한 공격적인 스타일의 드라이버입니다."
-            },
-            {
-                "name": "아비드 리드블라드 (Arvid Lindblad)",
-                "no": "41",
-                "country": "🇬🇧 영국",
-                "bio": "레드불 청소년 육성 프로그램이 배출한 차세대 루키 드라이버로 높은 성장 가능성을 인정받고 있습니다."
-            }
-        ]
-    },
-    "자우버 / 아우디 (Sauber / Audi)": {
-        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/audi.png",
-        "founded": "1993년 (자우버)",
-        "base": "스위스 힌빌",
-        "features": "오랜 역사의 스위스 자우버 팀을 기반으로 독일 명문 브랜드 아우디(Audi)가 인수를 통해 2026년 워크스 팀으로 완전 전환합니다.",
-        "drivers": [
-            {
-                "name": "니코 휠켄베르크 (Nico Hülkenberg)",
-                "no": "27",
-                "country": "🇩🇪 독일",
-                "bio": "F1 무대에서 검증된 탄탄한 기본기와 뛰어난 예선 기록 능력을 보유한 경험 풍부한 베테랑 드라이버입니다."
-            },
-            {
-                "name": "가브리엘 보르톨레토 (Gabriel Bortoleto)",
-                "no": "5",
-                "country": "🇧🇷 브라질",
-                "bio": "F3 챔피언에 이어 F2에서도 독보적인 활약을 펼치며 브라질의 F1 부활을 이끄는 차세대 신성입니다."
+                "name_en": "Kimi Antonelli",
+                "name_kr": "키미 안토넬리",
+                "number": "12",
+                "country": "🇮🇹 Italy",
+                "role": "루키 드라이버",
+                "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Andrea_Kimi_Antonelli_2024.jpg/800px-Andrea_Kimi_Antonelli_2024.jpg",
+                "desc": "실버 애로우의 미래. 세대교체의 중심에 선 차세대 유망주."
             }
         ]
     }
-}
-
-# 3. 한글 F1 일정표 데이터
-F1_SCHEDULE_KOREAN = [
-    {"round": "제 1 라운드", "gp": "🇦🇺 호주 그랑프리", "circuit": "알버트 파크 서킷 (멜버른)", "date": "3월 6일 ~ 3월 8일"},
-    {"round": "제 2 라운드", "gp": "🇨🇳 중국 그랑프리", "circuit": "상하이 인터내셔널 서킷", "date": "3월 13일 ~ 3월 15일"},
-    {"round": "제 3 라운드", "gp": "🇯🇵 일본 그랑프리", "circuit": "스즈카 서킷", "date": "3월 27일 ~ 3월 29일"},
-    {"round": "제 4 라운드", "gp": "🇺🇸 마이애미 그랑프리", "circuit": "마이애미 인터네셔널 오토드롬", "date": "5월 1일 ~ 5월 3일"},
-    {"round": "제 5 라운드", "gp": "🇨🇦 캐나다 그랑프리", "circuit": "질 빌뇌브 서킷 (몬트리올)", "date": "5월 22일 ~ 5월 24일"},
-    {"round": "제 6 라운드", "gp": "🇲🇨 모나코 그랑프리", "circuit": "서킷 드 모나코 (몬테카를로)", "date": "6월 5일 ~ 6월 7일"},
-    {"round": "제 7 라운드", "gp": "🇪🇸 스페인 바르셀로나 GP", "circuit": "서킷 드 바르셀로나-카탈루냐", "date": "6월 12일 ~ 6월 14일"},
-    {"round": "제 8 라운드", "gp": "🇦🇹 오스트리아 그랑프리", "circuit": "레드불 링 (슈필베르크)", "date": "6월 26일 ~ 6월 28일"},
-    {"round": "제 9 라운드", "gp": "🇬🇧 영국 그랑프리", "circuit": "실버스톤 서킷", "date": "7월 3일 ~ 7월 5일"},
-    {"round": "제 10 라운드", "gp": "🇧🇪 벨기에 그랑프리", "circuit": "스파-프랑코샹 서킷", "date": "7월 17일 ~ 7월 19일"},
-    {"round": "제 11 라운드", "gp": "🇭🇺 헝가리 그랑프리", "circuit": "헝가로링 (부다페스트)", "date": "7월 24일 ~ 7월 26일"},
-    {"round": "제 12 라운드", "gp": "🇳🇱 네덜란드 그랑프리", "circuit": "잔트보르트 서킷", "date": "8월 21일 ~ 8월 23일"},
-    {"round": "제 13 라운드", "gp": "🇮🇹 이탈리아 몬차 GP", "circuit": "몬차 국립 서킷", "date": "9월 4일 ~ 9월 6일"},
-    {"round": "제 14 라운드", "gp": "🇪🇸 마드리드 그랑프리", "circuit": "마드리드 스트리트 서킷", "date": "9월 11일 ~ 9월 13일"},
-    {"round": "제 15 라운드", "gp": "🇦🇿 아제르바이젠 GP", "circuit": "바쿠 시티 서킷", "date": "9월 24일 ~ 9월 26일"},
-    {"round": "제 16 라운드", "gp": "🇸🇬 싱가포르 그랑프리", "circuit": "마리나 베이 스트리트 서킷", "date": "10월 9일 ~ 10월 11일"},
-    {"round": "제 17 라운드", "gp": "🇺🇸 미국 오스틴 GP", "circuit": "서킷 오브 디 아메리카스 (COTA)", "date": "10월 23일 ~ 10월 25일"},
-    {"round": "제 18 라운드", "gp": "🇲🇽 멕시코 그랑프리", "circuit": "아우토드로모 에르마노스 로드리게스", "date": "10월 30일 ~ 11월 1일"},
-    {"round": "제 19 라운드", "gp": "🇧🇷 브라질 상파울루 GP", "circuit": "인테르라고스 서킷", "date": "11월 6일 ~ 11월 8일"},
-    {"round": "제 20 라운드", "gp": "🇺🇸 라스베이거스 GP", "circuit": "라스베이거스 스트립 서킷", "date": "11월 19일 ~ 11월 21일"},
-    {"round": "제 21 라운드", "gp": "🇶🇦 카타르 그랑프리", "circuit": "루사일 인터내셔널 서킷", "date": "11월 27일 ~ 11월 29일"},
-    {"round": "제 22 라운드", "gp": "🇦🇪 아부다비 그랑프리", "circuit": "야스 마리나 서킷", "date": "12월 4일 ~ 12월 6일"}
 ]
 
-# 상단 메인 헤더 타이틀 (F1ow)
-st.markdown('<div class="main-title">🏎️ F1ow 🏁</div>', unsafe_allow_html=True)
+# 1. 상단 Header / Flow 영역 (공식 F1 로고 적용)
+st.markdown("""
+    <div class="f1-header-container">
+        <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
+        <div class="f1-logo-text">GRID & DRIVER VAULT</div>
+        <div style="color: #9ca3af; font-size: 1rem; margin-top: 5px;">공식 F1 팀 및 드라이버 검색 가이드</div>
+    </div>
+""", unsafe_allow_html=True)
 
-# 탭 구성
-tab1, tab2 = st.tabs(["🏎️ 팀 & 드라이버 검색", "📅 시즌 한글 일정표"])
+# 2. 검색창 레이아웃
+col_search, col_filter = st.columns([3, 1])
 
-# [TAB 1] 팀 검색 & 드라이버 프로필
-with tab1:
-    st.markdown('<div class="sub-title">F1 팀 조회 및 드라이버 상세 정보</div>', unsafe_allow_html=True)
-    
-    selected_team_name = st.selectbox("조회할 F1 팀을 선택하세요:", list(F1_TEAMS.keys()))
-    
-    if selected_team_name:
-        team = F1_TEAMS[selected_team_name]
-        
-        col1, col2 = st.columns([1, 1.4])
-        
-        with col1:
-            # 팀 로고 이미지 (흰색 라운딩 프레임 박스로 잘 보이게 감싸기)
-            st.markdown(f"""
-                <div class="logo-container">
-                    <img src="{team['logo']}" style="max-width:100%; max-height:150px; object-fit:contain;">
+with col_search:
+    search_query = st.text_input(
+        "🔍 검색어를 입력하세요",
+        placeholder="예: 페라리, 랜도 노리스, 1번, 레드불, 해밀턴...",
+        label_visibility="collapsed"
+    )
+
+with col_filter:
+    team_list = ["전체 팀 보기"] + [t["team_kr"] for t in f1_database]
+    selected_team = st.selectbox("팀 선택", team_list, label_visibility="collapsed")
+
+# 3. 검색 알고리즘
+filtered_teams = []
+query = search_query.strip().lower()
+
+for team in f1_database:
+    if selected_team != "전체 팀 보기" and team["team_kr"] != selected_team:
+        continue
+
+    if not query:
+        filtered_teams.append(team)
+    else:
+        # 키워드/번호/이름 검색
+        match_team = any(query in kw.lower() for kw in team["search_keywords"])
+        match_driver = any(
+            query in d["name_kr"].lower() or 
+            query in d["name_en"].lower() or 
+            query == d["number"]
+            for d in team["drivers"]
+        )
+        if match_team or match_driver:
+            filtered_teams.append(team)
+
+# 4. 결과 출력
+if not filtered_teams:
+    st.error(f"'{search_query}'에 대한 검색 결과가 없습니다. 팀명(예: 페라리)이나 드라이버 이름, 번호(#1)를 검색해보세요.")
+else:
+    for team in filtered_teams:
+        st.markdown(f"""
+            <div class="team-card" style="border-top: 4px solid {team['color']};">
+                <div class="team-title" style="color: {team['color']};">{team['team_en']}</div>
+                <div style="font-size: 1.1rem; color: #d1d5db; margin-bottom: 12px;">{team['team_kr']}</div>
+                <div>
+                    <span class="stat-badge">감독: {team['principal']}</span>
+                    <span class="stat-badge">파워유닛: {team['power_unit']}</span>
                 </div>
-            """, unsafe_allow_html=True)
-            
-            # 팀 상세 정보 (흰색 글씨)
-            st.markdown(f"""
-                <div class="team-info-box">
-                    <h3 style="color:#E10600 !important; margin-top:0; font-weight:bold;">{selected_team_name}</h3>
-                    <p style="color:#FFFFFF !important;"><b>🗓️ 창단 연도:</b> {team['founded']}</p>
-                    <p style="color:#FFFFFF !important;"><b>📍 본거지:</b> {team['base']}</p>
-                    <hr style="border-color:#444;">
-                    <p style="color:#FFFFFF !important;"><b>💡 팀 특징 및 소개:</b><br>{team['features']}</p>
-                </div>
-            """, unsafe_allow_html=True)
-            
-        with col2:
-            st.markdown("<h3 style='color:#FFFFFF !important;'>👨‍✈️ 소속 드라이버 라인업</h3>", unsafe_allow_html=True)
-            st.info("💡 **선수 이름을 클릭하면 상세 설명과 이력이 나옵니다!**")
-            
+            </div>
+        """, unsafe_allow_html=True)
+
+        col_car, col_drivers = st.columns([1.2, 2])
+
+        with col_car:
+            st.image(team["car_img"], caption=f"{team['team_kr']} 머신", use_container_width=True)
+
+        with col_drivers:
             for driver in team["drivers"]:
-                with st.expander(f"🏎️ **{driver['name']}** (Car No. {driver['no']})", expanded=False):
-                    st.markdown(f"<span style='color:#FFFFFF !important;'><b>국적:</b> {driver['country']}</span>", unsafe_allow_html=True)
-                    st.markdown(f"<span style='color:#FFFFFF !important;'><b>엔트리 번호:</b> No. {driver['no']}</span>", unsafe_allow_html=True)
-                    st.write("---")
-                    st.markdown("<b style='color:#FFFFFF !important;'>📝 드라이버 소개:</b>", unsafe_allow_html=True)
-                    st.markdown(f"<p style='color:#E0E0E0 !important;'>{driver['bio']}</p>", unsafe_allow_html=True)
-
-# [TAB 2] 한글 일정표
-with tab2:
-    st.markdown('<div class="sub-title">2026 F1 레이스 전체 일정 (한글)</div>', unsafe_allow_html=True)
-    st.caption("ℹ️ F1 레이스 위크엔드는 금요일 연습경기(FP1, FP2), 토요일 예선(Qualifying), 일요일 메인 레이스로 진행됩니다.")
-    
-    for i in range(0, len(F1_SCHEDULE_KOREAN), 2):
-        col_a, col_b = st.columns(2)
+                d_col1, d_col2 = st.columns([1, 3])
+                with d_col1:
+                    st.image(driver["img"], width=110)
+                with d_col2:
+                    st.markdown(f"""
+                        <div class="driver-card" style="border-left: 4px solid {team['color']};">
+                            <div class="driver-number">#{driver['number']}</div>
+                            <div>
+                                <div class="driver-name">{driver['name_kr']} <span style="font-size:0.85rem; color:#9ca3af;">({driver['name_en']})</span></div>
+                                <div style="font-size: 0.85rem; color: #9ca3af;">{driver['country']} • {driver['role']}</div>
+                                <div style="font-size: 0.85rem; color: #d1d5db; margin-top: 4px;">{driver['desc']}</div>
+                            </div>
+                        </div>
+                    """, unsafe_allow_html=True)
         
-        with col_a:
-            item = F1_SCHEDULE_KOREAN[i]
-            st.markdown(f"""
-                <div class="schedule-card">
-                    <span style="color:#E10600 !important; font-weight:bold;">{item['round']}</span>
-                    <h4 style="margin:5px 0; color:#FFFFFF !important;">{item['gp']}</h4>
-                    <p style="margin:2px 0; color:#D0D0D0 !important;">📍 {item['circuit']}</p>
-                    <p style="margin:2px 0; color:#64B5F6 !important; font-weight:bold;">🗓️ {item['date']}</p>
-                </div>
-            """, unsafe_allow_html=True)
-            
-        if i + 1 < len(F1_SCHEDULE_KOREAN):
-            with col_b:
-                item = F1_SCHEDULE_KOREAN[i+1]
-                st.markdown(f"""
-                    <div class="schedule-card">
-                        <span style="color:#E10600 !important; font-weight:bold;">{item['round']}</span>
-                        <h4 style="margin:5px 0; color:#FFFFFF !important;">{item['gp']}</h4>
-                        <p style="margin:2px 0; color:#D0D0D0 !important;">📍 {item['circuit']}</p>
-                        <p style="margin:2px 0; color:#64B5F6 !important; font-weight:bold;">🗓️ {item['date']}</p>
-                    </div>
-                """, unsafe_allow_html=True)
+        st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 30px 0;'>", unsafe_allow_html=True)
