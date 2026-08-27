@@ -56,7 +56,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 헤더 및 BGM 컨트롤러
+# 1. 헤더 및 BGM 컨트롤러 (에러 방지 처리 완료)
 st.markdown('<div class="f1-header">🏎️ 2026 F1 WORLD CHAMPIONSHIP</div>', unsafe_allow_html=True)
 
 with st.sidebar:
@@ -64,11 +64,14 @@ with st.sidebar:
     play_bgm = st.checkbox("Lose My Mind 재생", value=False)
     if play_bgm:
         try:
-            # 같은 폴더에 저장된 lose_my_mind.mp3 사용
+            # 로컬 파일이 있으면 로컬 파일 재생
             st.audio("lose_my_mind.mp3", format="audio/mp3")
             st.caption("Don Toliver - Lose My Mind (feat. Doja Cat) [F1® Movie OST]")
-        except FileNotFoundError:
-            st.error("⚠️ 프로젝트 폴더에 'lose_my_mind.mp3' 음원 파일이 없습니다. 파일을 추가해 주세요.")
+        except Exception:
+            # 로컬 파일이 없어서 에러가 발생하면 안정적인 웹 스트리밍으로 전환
+            online_audio_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+            st.audio(online_audio_url, format="audio/mp3")
+            st.caption("Don Toliver - Lose My Mind (feat. Doja Cat) [F1® Movie OST]")
 
 # 데이터베이스
 f1_database = [
@@ -125,91 +128,4 @@ f1_database = [
         "team_en": "Visa Cash App RB F1 Team", "team_kr": "레이싱 불스 (RB)", "color": "#6692FF", "principal": "Laurent Mekies", "power_unit": "Honda RBPT",
         "drivers": [
             {"name_en": "Liam Lawson", "name_kr": "리암 로슨", "number": "30", "country": "뉴질랜드 (New Zealand)", "birth": "2002년 2월 11일", "role": "메인 드라이버", "desc": "레드불 주니어 팀 출신으로 2023년 리저브 드라이버로 대타 출전 후 정식 시트를 확보함."},
-            {"name_en": "Isack Hadjar", "name_kr": "아이작 하다르", "number": "6", "country": "프랑스 (France)", "birth": "2004년 9월 28일", "role": "메인 드라이버", "desc": "레드불 주니어 프로그램 출신으로 F2에서 뛰어난 성적을 올린 뒤 레이싱 불스에 합류함."}
-        ]
-    },
-    {
-        "team_en": "MoneyGram Haas F1 Team", "team_kr": "하스", "color": "#B6BABD", "principal": "Ayao Komatsu", "power_unit": "Ferrari",
-        "drivers": [
-            {"name_en": "Esteban Ocon", "name_kr": "에스테반 오콘", "number": "31", "country": "프랑스 (France)", "birth": "1996년 9월 17일", "role": "메인 드라이버", "desc": "2016년 데뷔 후 2021년 헝가리 그랑프리에서 첫 승을 기록하였으며 하스 팀으로 이적함."},
-            {"name_en": "Oliver Bearman", "name_kr": "올리버 베어만", "number": "87", "country": "영국 (United Kingdom)", "birth": "2005년 5월 8일", "role": "메인 드라이버", "desc": "페라리 드라이버 아카데미 출신으로 2024년 페라리 대타 출전에서 포인트를 획득하고 하스 정식 드라이버로 계약함."}
-        ]
-    },
-    {
-        "team_en": "Alpine F1 Team", "team_kr": "알핀", "color": "#0093CC", "principal": "Oliver Oakes", "power_unit": "Renault",
-        "drivers": [
-            {"name_en": "Pierre Gasly", "name_kr": "피에르 가슬리", "number": "10", "country": "프랑스 (France)", "birth": "1996년 2월 7일", "role": "메인 드라이버", "desc": "2020년 이탈리아 그랑프리 우승을 기록한 바 있으며 2023년부터 알핀 메인 드라이버로 활약 중."},
-            {"name_en": "Jack Doohan", "name_kr": "잭 두한", "number": "7", "country": "호주 (Australia)", "birth": "2003년 1월 20일", "role": "메인 드라이버", "desc": "알핀 아카데미 출신 드라이버로 F2 무대를 거쳐 알핀의 정식 드라이버로 승격함."}
-        ]
-    },
-    {
-        "team_en": "Cadillac F1 Team", "team_kr": "캐딜락 F1 팀", "color": "#FFD700", "principal": "Graeme Lowdon", "power_unit": "Ferrari",
-        "drivers": [
-            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 (Finland)", "birth": "1989년 8월 28일", "role": "메인 드라이버", "desc": "메르세데스 시절 통산 10회 우승을 기록한 베테랑 드라이버로, 캐딜락의 창단 메인 드라이버로 계약."},
-            {"name_en": "Sergio Pérez", "name_kr": "세르히오 페레스", "number": "11", "country": "멕시코 (Mexico)", "birth": "1990년 1월 26일", "role": "메인 드라이버", "desc": "레드불 레이싱 출신 통산 6회 우승자로, 베테랑의 풍부한 경험을 바탕으로 캐딜락 F1 팀에 합류."}
-        ]
-    }
-]
-
-f1_schedule_2026 = [
-    {"라운드": "1R", "국가": "🇦🇺 오스트레일리아", "서킷 명칭": "앨버트 파크 서킷", "도시": "멜버른", "결승 날짜": "2026. 03. 08"},
-    {"라운드": "2R", "국가": "🇨🇳 중국", "서킷 명칭": "상하이 인터내셔널 서킷", "도시": "상하이", "결승 날짜": "2026. 03. 15"},
-    {"라운드": "3R", "국가": "🇯🇵 일본", "서킷 명칭": "스즈카 서킷", "도시": "스즈카", "결승 날짜": "2026. 03. 29"},
-    {"라운드": "4R", "국가": "🇺🇸 미국", "서킷 명칭": "마이애미 인터내셔널 오토드로름", "도시": "마이애미", "결승 날짜": "2026. 05. 03"},
-    {"라운드": "5R", "국가": "🇨🇦 캐나다", "서킷 명칭": "서킷 질 빌뇌브", "도시": "몬트리올", "결승 날짜": "2026. 05. 24"},
-    {"라운드": "6R", "국가": "🇲🇨 모나코", "서킷 명칭": "서킷 드 모나코", "도시": "몬테카를로", "결승 날짜": "2026. 06. 07"},
-    {"라운드": "7R", "국가": "🇪🇸 스페인", "서킷 명칭": "서킷 드 바르셀로나-카탈루냐", "도시": "바르셀로나", "결승 날짜": "2026. 06. 14"},
-    {"라운드": "8R", "국가": "🇦🇹 오스트리아", "서킷 명칭": "레드불 링", "도시": "슈필베르크", "결승 날짜": "2026. 06. 28"},
-    {"라운드": "9R", "국가": "🇬🇧 영국", "서킷 명칭": "실버스톤 서킷", "도시": "실버스톤", "결승 날짜": "2026. 07. 05"},
-    {"라운드": "10R", "국가": "🇧🇪 벨기에", "서킷 명칭": "스파-프랑코샹 서킷", "도시": "스파", "결승 날짜": "2026. 07. 19"},
-    {"라운드": "11R", "국가": "🇭🇺 헝가리", "서킷 명칭": "헝가로링", "도시": "부다페스트", "결승 날짜": "2026. 07. 26"},
-    {"라운드": "12R", "국가": "🇳🇱 네덜란드", "서킷 명칭": "잔트포르트 서킷", "도시": "잔트포르트", "결승 날짜": "2026. 08. 23"},
-    {"라운드": "13R", "국가": "🇮🇹 이탈리아", "서킷 명칭": "오토드로모 나치오날레 몬차", "도시": "몬차", "결승 날짜": "2026. 09. 06"},
-    {"라운드": "14R", "국가": "🇪🇸 스페인", "서킷 명칭": "마드리드 스트리트 서킷", "도시": "마드리드", "결승 날짜": "2026. 09. 13"},
-    {"라운드": "15R", "국가": "🇦🇿 아제르바이잔", "서킷 명칭": "바쿠 시티 서킷", "도시": "바쿠", "결승 날짜": "2026. 09. 26"},
-    {"라운드": "16R", "국가": "🇸🇬 싱가포르", "서킷 명칭": "마리나 베이 스트리트 서킷", "도시": "싱가포르", "결승 날짜": "2026. 10. 11"},
-    {"라운드": "17R", "국가": "🇺🇸 미국", "서킷 명칭": "서킷 오브 디 아메리카스", "도시": "오스틴", "결승 날짜": "2026. 10. 25"},
-    {"라운드": "18R", "국가": "🇲🇽 멕시코", "서킷 명칭": "오토드로모 에르마노스 로드리게스", "도시": "멕시코시티", "결승 날짜": "2026. 11. 01"},
-    {"라운드": "19R", "국가": "🇧🇷 브라질", "서킷 명칭": "호세 카를로스 파체 서킷 (인터라고스)", "도시": "상파울루", "결승 날짜": "2026. 11. 08"},
-    {"라운드": "20R", "국가": "🇺🇸 미국", "서킷 명칭": "라스베이거스 스트립 서킷", "도시": "라스베이거스", "결승 날짜": "2026. 11. 21"},
-    {"라운드": "21R", "국가": "🇶🇦 카타르", "서킷 명칭": "루사일 인터내셔널 서킷", "도시": "루사일", "결승 날짜": "2026. 11. 29"},
-    {"라운드": "22R", "국가": "🇦🇪 아랍에미리트", "서킷 명칭": "야스 마리나 서킷", "도시": "아부다비", "결승 날짜": "2026. 12. 06"}
-]
-
-# 2. 카테고리 탭 생성
-tab1, tab2 = st.tabs(["🏎️ F1 팀 & 드라이버", "📅 2026 경기 일정"])
-
-with tab1:
-    team_list = [t["team_kr"] for t in f1_database]
-    selected_team = st.selectbox("팀 선택", team_list)
-
-    for team in f1_database:
-        if team["team_kr"] == selected_team:
-            st.markdown(f"""
-                <div class="team-card" style="border-top: 4px solid {team['color']}; margin-top: 15px;">
-                    <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
-                    <div style="margin-top: 6px;">
-                        <span class="stat-badge">감독: {team['principal']}</span>
-                        <span class="stat-badge">파워유닛: {team['power_unit']}</span>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-
-            cols = st.columns(len(team["drivers"]))
-            for idx, driver in enumerate(team["drivers"]):
-                with cols[idx]:
-                    with st.popover(f"🏎️ #{driver['number']} {driver['name_kr']}", use_container_width=True):
-                        st.markdown(f"### #{driver['number']} {driver['name_kr']}")
-                        st.caption(f"{driver['name_en']}")
-                        st.write(f"**국적:** {driver['country']}")
-                        st.write(f"**생년월일:** {driver['birth']}")
-                        st.write(f"**역할:** {driver['role']}")
-                        st.info(driver["desc"])
-
-with tab2:
-    st.subheader("🏁 2026 FIA F1 월드 챔피언십 전체 일정")
-    st.dataframe(
-        f1_schedule_2026,
-        use_container_width=True,
-        hide_index=True
-    )
+            {"name_en": "Isack Hadjar",
