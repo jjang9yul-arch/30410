@@ -374,3 +374,50 @@ with podium_col:
                 </div>
             </div>
         """, unsafe_allow_html=True)
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>F1 일정표 확인</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        .hidden { display: none; }
+        #schedule-box {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-left: 4px solid #e10600;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>F1 정보 센터</h2>
+    <button id="toggle-btn">F1 일정표 보기</button>
+
+    <div id="schedule-box" class="hidden">
+        <h3>2026시즌 주요 그랑프리 일정</h3>
+        <ul>
+            <li>개막전: 바레인 그랑프리</li>
+            <li>2라운드: 사우디아라비아 그랑프리</li>
+            <li>3라운드: 호주 그랑프리</li>
+        </ul>
+    </div>
+
+    <script>
+        const btn = document.getElementById('toggle-btn');
+        const box = document.getElementById('schedule-box');
+
+        btn.addEventListener('click', function() {
+            if (box.classList.contains('hidden')) {
+                box.classList.remove('hidden');
+                btn.textContent = '일정표 숨기기';
+            } else {
+                box.classList.add('hidden');
+                btn.textContent = 'F1 일정표 보기';
+            }
+        });
+    </script>
+
+</body>
+</html>
