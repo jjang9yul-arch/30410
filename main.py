@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS - 상단 공백 제거 및 로고/빨간 줄을 깔끔하게 재배치
+# Custom CSS - 상단 공백을 없애고 로고와 탭(카테고리) 메뉴를 한 줄로 나란히 밀착 배치
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -19,33 +19,38 @@ st.markdown("""
 
     /* Streamlit 상단 기본 여백 제거 */
     .block-container {
-        padding-top: 1rem !important;
+        padding-top: 0.5rem !important;
         padding-bottom: 2rem !important;
     }
 
-    /* 상단 F1 로고 및 빨간 줄 컨테이너 (과도한 공백 없음) */
-    .f1-header-container {
+    /* 상단 헤더 컨테이너 (로고와 탭 메뉴를 한 줄에 배치하기 위함) */
+    .f1-top-layout {
         display: flex;
-        flex-direction: column;
         align-items: center;
+        justify-content: space-between;
         margin-top: -10px;
-        margin-bottom: 20px;
+        margin-bottom: 5px;
+        padding: 0 10px;
     }
 
     .f1-logo-img {
         width: 100%;
-        max-width: 280px;
+        max-width: 200px;
         height: auto;
         object-fit: contain;
-        filter: drop-shadow(0px 0px 12px rgba(225, 6, 0, 0.7));
-        margin-bottom: 6px;
+        filter: drop-shadow(0px 0px 10px rgba(225, 6, 0, 0.7));
     }
 
     .f1-accent-line {
         width: 100%;
-        max-width: 1000px;
         height: 2px;
         background: linear-gradient(90deg, transparent, #e10600, transparent);
+        margin-bottom: 15px;
+    }
+
+    /* Streamlit 기본 탭(카테고리) 디자인을 로고 우측으로 바짝 끌어올림 */
+    .stTabs {
+        margin-top: -15px;
     }
 
     /* 하얀 글씨 보장 */
@@ -82,18 +87,7 @@ st.markdown("""
         margin-top: 8px;
     }
 
-    /* 드라이버 버튼 내부 텍스트 스타일 가이드 (Streamlit 버튼은 마크다운 직접 적용이 어려워 카드형으로 재구성) */
-    .driver-btn-box {
-        background: #121824;
-        border: 1px solid #2a3447;
-        border-radius: 10px;
-        padding: 12px;
-        margin-bottom: 10px;
-        text-align: center;
-        transition: all 0.2s ease;
-    }
-
-    /* 드라이버 번호 및 이름 크게 강조 */
+    /* 드라이버 번호 및 이름 스타일 */
     .driver-big-num {
         font-family: 'Orbitron', sans-serif;
         font-size: 1.5rem;
@@ -121,15 +115,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 상단 F1 로고 및 깔끔한 빨간 줄 (공백 최소화)
-st.markdown("""
-    <div class="f1-header-container">
-        <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
-        <div class="f1-accent-line"></div>
-    </div>
-""", unsafe_allow_html=True)
-
-# 2026 시즌 전체 11개 팀 및 22명 선수 데이터베이스 (전문적이고 깔끔한 설명)
+# 2026 시즌 전체 11개 팀 및 22명 선수 데이터베이스
 f1_teams_database = [
     {
         "team_en": "Mercedes-AMG Petronas F1 Team", "team_kr": "메르세데스", "color": "#27F4D2", "principal": "Toto Wolff", "power_unit": "Mercedes",
@@ -204,113 +190,4 @@ f1_teams_database = [
     {
         "team_en": "Cadillac F1 Team", "team_kr": "캐딜락 F1 팀", "color": "#FFD700", "principal": "Graeme Lowdon", "power_unit": "Ferrari",
         "drivers": [
-            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 🇫🇮", "birth": "1989.08.28", "story": "풍부한 우승 경력과 방대한 머신 개발 데이터를 지닌 베테랑 드라이버입니다. 신생 캐딜락 팀의 든든한 기준점이 되어줍니다."},
-            {"name_en": "Sergio Pérez", "name_kr": "세르히오 페레스", "number": "11", "country": "멕시코 🇲🇽", "birth": "1990.01.26", "story": "시가지 서킷에서 특히 강한 면모를 보이며 타이어 관리 능력이 뛰어납니다. 노련한 경험으로 팀의 연착륙을 돕습니다."}
-        ]
-    }
-]
-
-# 2026 그랑프리 일정 및 포디움 결과 데이터
-f1_races_2026 = [
-    {"round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷", "date": "2026.03.08", "status": "완료", "podium": ["🥇 조지 러셀 (MER)", "🥈 키미 안토넬리 (MER)", "🥉 샤를 르클레르 (FER)"]},
-    {"round": "2R", "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷", "date": "2026.03.15", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 조지 러셀 (MER)", "🥉 루이스 해밀턴 (FER)"]},
-    {"round": "3R", "country": "🇯🇵 일본", "circuit": "스즈카 서킷", "date": "2026.03.29", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 오스카 피아스트리 (MCL)", "🥉 샤를 르클레르 (FER)"]},
-    {"round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 오토드로름", "date": "2026.05.03", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 랜도 노리스 (MCL)", "🥉 오스카 피아스트리 (MCL)"]},
-    {"round": "5R", "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브", "date": "2026.05.24", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 루이스 해밀턴 (FER)", "🥉 막스 베르스타펜 (RBR)"]},
-    {"round": "6R", "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코", "date": "2026.06.07", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 루이스 해밀턴 (FER)", "🥉 피에르 개슬리 (ALP)"]},
-    {"round": "7R", "country": "🇪🇸 스페인", "circuit": "바르셀로나-카탈루냐", "date": "2026.06.14", "status": "완료", "podium": ["🥇 루이스 해밀턴 (FER)", "🥈 조지 러셀 (MER)", "🥉 랜도 노리스 (MCL)"]},
-    {"round": "8R", "country": "🇦🇹 오스트리아", "circuit": "레드불 링", "date": "2026.06.28", "status": "완료", "podium": ["🥇 조지 러셀 (MER)", "🥈 막스 베르스타펜 (RBR)", "🥉 키미 안토넬리 (MER)"]},
-    {"round": "9R", "country": "🇬🇧 영국", "circuit": "실버스톤 서킷", "date": "2026.07.05", "status": "완료", "podium": ["🥇 샤를 르클레르 (FER)", "🥈 조지 러셀 (MER)", "🥉 루이스 해밀턴 (FER)"]},
-    {"round": "10R", "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 서킷", "date": "2026.07.19", "status": "완료", "podium": ["🥇 키미 안토넬리 (MER)", "🥈 샤를 르클레르 (FER)", "🥉 막스 베르스타펜 (RBR)"]},
-    {"round": "11R", "country": "🇭🇺 헝가리", "circuit": "헝가로링", "date": "2026.07.26", "status": "완료", "podium": ["🥇 랜도 노리스 (MCL)", "🥈 막스 베르스타펜 (RBR)", "🥉 키미 안토넬리 (MER)"]},
-    {"round": "12R", "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷", "date": "2026.08.23", "status": "완료", "podium": ["🥇 랜도 노리스 (MCL)", "🥈 키미 안토넬리 (MER)", "🥉 조지 러셀 (MER)"]},
-    {"round": "13R", "country": "🇮🇹 이탈리아", "circuit": "몬차 서킷", "date": "2026.09.06", "status": "예정", "podium": []},
-    {"round": "14R", "country": "🇪🇸 스페인 (마드리드)", "circuit": "마드리드 스트리트 서킷", "date": "2026.09.13", "status": "예정", "podium": []},
-    {"round": "15R", "country": "🇦🇿 아제르바이잔", "circuit": "바쿠 시티 서킷", "date": "2026.09.26", "status": "예정", "podium": []},
-    {"round": "16R", "country": "🇸🇬 싱가포르", "circuit": "마리나 베이 서킷", "date": "2026.10.11", "status": "예정", "podium": []},
-    {"round": "17R", "country": "🇺🇸 미국 (오스틴)", "circuit": "COTA 서킷", "date": "2026.10.25", "status": "예정", "podium": []},
-    {"round": "18R", "country": "🇲🇽 멕시코", "circuit": "로드리게스 서킷", "date": "2026.11.01", "status": "예정", "podium": []},
-    {"round": "19R", "country": "🇧🇷 브라질", "circuit": "인터라고스 서킷", "date": "2026.11.08", "status": "예정", "podium": []},
-    {"round": "20R", "country": "🇺🇸 미국 (라스베이거스)", "circuit": "라스베이거스 스트립", "date": "2026.11.21", "status": "예정", "podium": []},
-    {"round": "21R", "country": "🇶🇦 카타르", "circuit": "루사일 서킷", "date": "2026.11.29", "status": "예정", "podium": []},
-    {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷", "date": "2026.12.06", "status": "예정", "podium": []}
-]
-
-# 세션 상태 초기화
-if "selected_driver" not in st.session_state:
-    st.session_state.selected_driver = None
-
-# 탭 메뉴 구성
-tab1, tab2 = st.tabs(["🔍 F1 팀 검색 및 선수 정보", "📅 2026 그랑프리 일정 & 포디움"])
-
-# [탭 1] 팀 검색 및 선수 선택 기능
-with tab1:
-    st.subheader("🔍 F1 팀 검색 및 소속 선수 확인")
-    st.write("원하는 팀을 선택한 후, 아래 드라이버 카드를 누르면 번호와 이름이 강조되면서 상세 정보가 나타납니다.")
-    st.write("")
-    
-    team_name_list = [t["team_kr"] for t in f1_teams_database]
-    selected_search_team = st.selectbox("검색할 팀 선택", team_name_list)
-    
-    for team in f1_teams_database:
-        if team["team_kr"] == selected_search_team:
-            st.markdown(f"""
-                <div class="team-card" style="border-top: 5px solid {team['color']};">
-                    <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
-                    <div style="margin-top: 10px;">
-                        <span class="stat-badge">감독: {team['principal']}</span>
-                        <span class="stat-badge">파워 유닛: {team['power_unit']}</span>
-                    </div>
-                </div>
-            """, unsafe_allow_html=True)
-            
-            st.markdown("### 👥 소속 드라이버 선택")
-            d_cols = st.columns(2)
-            
-            for idx, driver in enumerate(team["drivers"]):
-                with d_cols[idx]:
-                    # 번호와 이름을 큼직하고 예쁘게 꾸민 클릭 유도 버튼
-                    btn_label = f"#{driver['number']}   |   {driver['name_kr']} ({driver['name_en']})"
-                    if st.button(btn_label, key=f"btn_{driver['number']}_{driver['name_en']}", use_container_width=True):
-                        st.session_state.selected_driver = driver
-
-    if st.session_state.selected_driver:
-        d = st.session_state.selected_driver
-        st.markdown(f"""
-            <div class="driver-detail-box">
-                <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 10px;">
-                    <span class="driver-big-num">#{d['number']}</span>
-                    <span class="driver-big-name">{d['name_kr']} ({d['name_en']})</span>
-                </div>
-                <p style="margin: 4px 0; font-size: 1rem; color: #cbd5e1;"><b>국적:</b> {d['country']} &nbsp;|&nbsp; <b>생년월일:</b> {d['birth']}</p>
-                <hr style="border-color: rgba(255,255,255,0.15); margin: 12px 0;">
-                <p style="font-size: 1.05rem; line-height: 1.7; color: #f1f5f9; margin-bottom: 0;">
-                    {d['story']}
-                </p>
-            </div>
-        """, unsafe_allow_html=True)
-
-# [탭 2] 2026 그랑프리 일정표 및 포디움 결과
-with tab2:
-    st.subheader("📅 2026 FIA F1 월드 챔피언십 일정 & 포디움 결과")
-    st.write("")
-
-    for race in f1_races_2026:
-        with st.container():
-            col_info, col_podium = st.columns([1.2, 1.8])
-            
-            with col_info:
-                st.markdown(f"### **{race['round']} - {race['country']}**")
-                st.write(f"📍 **서킷:** {race['circuit']}")
-                st.write(f"📅 **일정:** {race['date']}")
-                st.write(f"📌 **상태:** {'✅ 경기 완료' if race['status'] == '완료' else '⏳ 레이스 예정'}")
-            
-            with col_podium:
-                if race["status"] == "완료" and len(race["podium"]) > 0:
-                    st.markdown("##### 🏆 **포디움 (TOP 3 결과)**")
-                    for p in race["podium"]:
-                        st.markdown(f"- {p}")
-                else:
-                    st.info("아직 진행되지 않은 다가오는 그랑프리 경기입니다.")
-            
-            st.markdown("---")
+            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "
