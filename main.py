@@ -1,12 +1,12 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="F1 Official Teams & Drivers",
+    page_title="F1 Official Grid & Driver Vault",
     page_icon="🏎️",
     layout="wide"
 )
 
-# Custom CSS (F1 시그니처 레이싱 테마)
+# Custom CSS
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -71,7 +71,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 사진 이미지 속 10개 팀 + 캐딜락 F1 팀 데이터베이스 (각 팀별 고화질 공식 로고 1:1 매칭)
+# 10개 팀 + 캐딜락 F1 팀 데이터베이스 (국적, 생년월일, 객관적 프로필 설명 적용)
 f1_database = [
     {
         "team_en": "McLaren Formula 1 Team",
@@ -86,17 +86,19 @@ f1_database = [
                 "name_en": "Lando Norris",
                 "name_kr": "랜도 노리스",
                 "number": "1",
-                "country": "🇬🇧 United Kingdom",
-                "role": "월드 챔피언",
-                "desc": "디펜딩 월드 챔피언. 기존 #4번 대신 챔피언의 권리인 #1번을 달고 그리드를 지배 중입니다."
+                "country": "영국 (United Kingdom)",
+                "birth": "1999년 11월 13일",
+                "role": "메인 드라이버",
+                "desc": "2019년 맥라렌을 통해 F1에 데뷔했으며, 폴 포지션 및 우승 기록을 보유한 디펜딩 챔피언."
             },
             {
                 "name_en": "Oscar Piastri",
                 "name_kr": "오스카 피아스트리",
                 "number": "81",
-                "country": "🇦🇺 Australia",
+                "country": "호주 (Australia)",
+                "birth": "2001년 4월 6일",
                 "role": "메인 드라이버",
-                "desc": "맥라렌의 차세대 에이스. 냉정하고 압도적인 페이스를 자랑합니다."
+                "desc": "2021년 F2 챔피언 출신으로 2023년 맥라렌에 합류해 루키 시즌부터 스프린트 우승 및 포디움을 기록함."
             }
         ]
     },
@@ -113,17 +115,19 @@ f1_database = [
                 "name_en": "Charles Leclerc",
                 "name_kr": "샤를 르클레르",
                 "number": "16",
-                "country": "🇲🇨 Monaco",
+                "country": "모나코 (Monaco)",
+                "birth": "1997년 10월 16일",
                 "role": "메인 드라이버",
-                "desc": "페라리의 황태자. 압도적인 예선 퀄리파잉 스피드를 자랑하는 랩 타임의 마술사."
+                "desc": "2018년 자우버로 데뷔 후 2019년부터 스쿠데리아 페라리의 드라이버로 활동 중이며 다수의 퀄리파잉 폴 포지션을 기록함."
             },
             {
                 "name_en": "Lewis Hamilton",
                 "name_kr": "루이스 해밀턴",
                 "number": "44",
-                "country": "🇬🇧 United Kingdom",
+                "country": "영국 (United Kingdom)",
+                "birth": "1985년 1월 7일",
                 "role": "메인 드라이버",
-                "desc": "7회 월드 챔피언. 페라리 레드 슈트를 입고 8번째 타이틀 도전에 나선 전설."
+                "desc": "F1 통산 7회 월드 챔피언 달성자로, 맥라렌과 메르세데스를 거쳐 페라리로 이적함."
             }
         ]
     },
@@ -140,17 +144,19 @@ f1_database = [
                 "name_en": "George Russell",
                 "name_kr": "조지 러셀",
                 "number": "63",
-                "country": "🇬🇧 United Kingdom",
+                "country": "영국 (United Kingdom)",
+                "birth": "1998년 2월 15일",
                 "role": "메인 드라이버",
-                "desc": "메르세데스 레이싱의 중심축이자 정교한 레이싱 테크닉의 소유자."
+                "desc": "2018년 F2 챔피언 출신으로, 윌리엄스를 거쳐 2022년부터 메르세데스 메인 드라이버로 활동 중."
             },
             {
                 "name_en": "Kimi Antonelli",
                 "name_kr": "키미 안토넬리",
                 "number": "12",
-                "country": "🇮🇹 Italy",
-                "role": "루키 드라이버",
-                "desc": "실버 애로우의 미래. 세대교체의 중심에 선 유망주."
+                "country": "이탈리아 (Italy)",
+                "birth": "2006년 8월 25일",
+                "role": "메인 드라이버",
+                "desc": "메르세데스 주니어 프로그램 출신으로, 하위 카테고리를 거쳐 메르세데스 시트를 확보함."
             }
         ]
     },
@@ -167,17 +173,19 @@ f1_database = [
                 "name_en": "Max Verstappen",
                 "name_kr": "막스 베르스타펜",
                 "number": "33",
-                "country": "🇳🇱 Netherlands",
+                "country": "네덜란드 (Netherlands)",
+                "birth": "1997년 9월 30일",
                 "role": "메인 드라이버",
-                "desc": "챔피언의 상징 #1 대신 고유 번호 #33으로 탈환에 나선 천재 드라이버."
+                "desc": "역대 최연소 F1 데뷔 및 최연소 레이스 우승 기록을 보유하고 있는 월드 챔피언."
             },
             {
                 "name_en": "Yuki Tsunoda",
                 "name_kr": "츠노다 유키",
                 "number": "22",
-                "country": "🇯🇵 Japan",
+                "country": "일본 (Japan)",
+                "birth": "2000년 5월 11일",
                 "role": "메인 드라이버",
-                "desc": "공격적인 오버테이킹 실력과 배짱을 보유한 드라이버."
+                "desc": "혼다 드라이버 육성 프로그램 출신으로 2021년 F1 데뷔 후 레드불 레이싱 라인업에 출전."
             }
         ]
     },
@@ -194,17 +202,19 @@ f1_database = [
                 "name_en": "Alexander Albon",
                 "name_kr": "알렉산더 알본",
                 "number": "23",
-                "country": "🇹🇭 Thailand",
+                "country": "태국 (Thailand)",
+                "birth": "1996년 3월 23일",
                 "role": "메인 드라이버",
-                "desc": "윌리엄스 리빌딩의 일등 공신이자 꾸준한 포인트 획득원."
+                "desc": "토로 로소와 레드불 레이싱을 거쳐 2022년부터 윌리엄스의 리드 드라이버로 활약 중."
             },
             {
                 "name_en": "Carlos Sainz",
                 "name_kr": "카를로스 사인츠",
                 "number": "55",
-                "country": "🇪🇸 Spain",
+                "country": "스페인 (Spain)",
+                "birth": "1994년 9월 1일",
                 "role": "메인 드라이버",
-                "desc": "스페인의 베테랑 전략가. 윌리엄스로 합류하여 팀을 재건 중."
+                "desc": "토로 로소, 르노, 맥라렌, 페라리를 거쳐 윌리엄스로 이적한 베테랑 드라이버."
             }
         ]
     },
@@ -221,17 +231,19 @@ f1_database = [
                 "name_en": "Fernando Alonso",
                 "name_kr": "페르난도 알론소",
                 "number": "14",
-                "country": "🇪🇸 Spain",
-                "role": "베테랑 챔피언",
-                "desc": "F1 역사상 가장 집요하고 공격적인 도그파이트 기술을 가진 살아있는 전설."
+                "country": "스페인 (Spain)",
+                "birth": "1981년 7월 29일",
+                "role": "메인 드라이버",
+                "desc": "2005년과 2006년 월드 챔피언을 달성했으며 통산 300회 이상의 그랑프리 출전 경력을 보유한 드라이버."
             },
             {
                 "name_en": "Lance Stroll",
                 "name_kr": "랜스 스트롤",
                 "number": "18",
-                "country": "🇨🇦 Canada",
+                "country": "캐나다 (Canada)",
+                "birth": "1998년 10월 29일",
                 "role": "메인 드라이버",
-                "desc": "웨트 컨디션에서 뛰어난 감각을 보여주는 드라이버."
+                "desc": "2017년 윌리엄스를 통해 F1에 데뷔한 후 레이싱 포인트를 거쳐 애스턴 마틴에서 활약 중."
             }
         ]
     },
@@ -248,17 +260,19 @@ f1_database = [
                 "name_en": "Nico Hülkenberg",
                 "name_kr": "니코 훌켄버그",
                 "number": "27",
-                "country": "🇩🇪 Germany",
-                "role": "베테랑 드라이버",
-                "desc": "경험 풍부한 독일 출신 베테랑 머신 세팅 마스터."
+                "country": "독일 (Germany)",
+                "birth": "1987년 8월 19일",
+                "role": "메인 드라이버",
+                "desc": "2010년 데뷔 이래 다양한 팀에서 활동했으며 높은 레이스 운영 능력을 지닌 독일 출신 드라이버."
             },
             {
                 "name_en": "Gabriel Bortoleto",
                 "name_kr": "가브리엘 보르톨레토",
                 "number": "5",
-                "country": "🇧🇷 Brazil",
-                "role": "루키 드라이버",
-                "desc": "브라질 출신 신성. F3, F2를 석권하고 F1 입성."
+                "country": "브라질 (Brazil)",
+                "birth": "2004년 10월 14일",
+                "role": "메인 드라이버",
+                "desc": "2023년 F3 챔피언을 기록한 후 자우버 팀을 통해 F1에 정식 입성함."
             }
         ]
     },
@@ -266,7 +280,7 @@ f1_database = [
         "team_en": "Visa Cash App RB F1 Team",
         "team_kr": "레이싱 불스 (RB)",
         "logo_url": "https://upload.wikimedia.org/wikipedia/commons/0/0f/Racing_Bulls_logo.svg",
-        "search_keywords": ["레이싱불스", "rb", "리카도", "로슨"],
+        "search_keywords": ["레이싱불스", "rb", "로슨", "하다르"],
         "color": "#6692FF",
         "principal": "Laurent Mekies",
         "power_unit": "Honda RBPT",
@@ -275,17 +289,19 @@ f1_database = [
                 "name_en": "Liam Lawson",
                 "name_kr": "리암 로슨",
                 "number": "30",
-                "country": "🇳🇿 New Zealand",
+                "country": "뉴질랜드 (New Zealand)",
+                "birth": "2002년 2월 11일",
                 "role": "메인 드라이버",
-                "desc": "뉴질랜드 출신의 정교한 드라이빙 스킬을 갖춘 신예."
+                "desc": "레드불 주니어 팀 출신으로 2023년 리저브 드라이버로 대타 출전 후 정식 시트를 확보함."
             },
             {
                 "name_en": "Isack Hadjar",
                 "name_kr": "아이작 하다르",
                 "number": "6",
-                "country": "🇫🇷 France",
-                "role": "루키 드라이버",
-                "desc": "레드불 주니어 프로그램 출신의 공격적인 파이팅을 선보이는 루키."
+                "country": "프랑스 (France)",
+                "birth": "2004년 9월 28일",
+                "role": "메인 드라이버",
+                "desc": "레드불 주니어 프로그램 출신으로 F2에서 뛰어난 성적을 올린 뒤 레이싱 불스에 합류함."
             }
         ]
     },
@@ -302,17 +318,19 @@ f1_database = [
                 "name_en": "Esteban Ocon",
                 "name_kr": "에스테반 오콘",
                 "number": "31",
-                "country": "🇫🇷 France",
+                "country": "프랑스 (France)",
+                "birth": "1996년 9월 17일",
                 "role": "메인 드라이버",
-                "desc": "하스의 리더로 합류한 집요한 레이스를 펼치는 드라이버."
+                "desc": "2016년 데뷔 후 2021년 헝가리 그랑프리에서 첫 승을 기록하였으며 하스 팀으로 이적함."
             },
             {
                 "name_en": "Oliver Bearman",
                 "name_kr": "올리버 베어만",
                 "number": "87",
-                "country": "🇬🇧 United Kingdom",
-                "role": "루키 드라이버",
-                "desc": "대체 출전에서 강렬한 인상을 남기며 시트를 확보한 영국의 미래."
+                "country": "영국 (United Kingdom)",
+                "birth": "2005년 5월 8일",
+                "role": "메인 드라이버",
+                "desc": "페라리 드라이버 아카데미 출신으로 2024년 페라리 대타 출전에서 포인트를 획득하고 하스 정식 드라이버로 계약함."
             }
         ]
     },
@@ -329,23 +347,25 @@ f1_database = [
                 "name_en": "Pierre Gasly",
                 "name_kr": "피에르 가슬리",
                 "number": "10",
-                "country": "🇫🇷 France",
+                "country": "프랑스 (France)",
+                "birth": "1996년 2월 7일",
                 "role": "메인 드라이버",
-                "desc": "프랑스 플래그십 팀의 에이스 드라이버."
+                "desc": "2020년 이탈리아 그랑프리 우승을 기록한 바 있으며 2023년부터 알핀 메인 드라이버로 활약 중."
             },
             {
                 "name_en": "Jack Doohan",
                 "name_kr": "잭 두한",
                 "number": "7",
-                "country": "🇦🇺 Australia",
-                "role": "루키 드라이버",
-                "desc": "F2 무대를 거쳐 승격한 신예 오스트레일리아 드라이버."
+                "country": "호주 (Australia)",
+                "birth": "2003년 1월 20일",
+                "role": "메인 드라이버",
+                "desc": "알핀 아카데미 출신 드라이버로 F2 무대를 거쳐 알핀의 정식 드라이버로 승격함."
             }
         ]
     },
     {
         "team_en": "Cadillac F1 Team",
-        "team_kr": "캐딜락 F1 팀 (신규 참전 예정)",
+        "team_kr": "캐딜락 F1 팀",
         "logo_url": "https://upload.wikimedia.org/wikipedia/commons/a/a2/Cadillac_logo.svg",
         "search_keywords": ["캐딜락", "cadillac", "11번째"],
         "color": "#FFD700",
@@ -356,23 +376,25 @@ f1_database = [
                 "name_en": "TBA Driver 1",
                 "name_kr": "미정 드라이버 1",
                 "number": "--",
-                "country": "🇺🇸 USA",
+                "country": "미정",
+                "birth": "미정",
                 "role": "시트 확정 대기 중",
-                "desc": "신규 11번째 팀 참전에 맞춰 선발될 메인 드라이버."
+                "desc": "신규 11번째 팀 참전에 맞춰 선발될 예정인 드라이버."
             },
             {
                 "name_en": "TBA Driver 2",
                 "name_kr": "미정 드라이버 2",
                 "number": "--",
-                "country": "🇺🇸 USA",
+                "country": "미정",
+                "birth": "미정",
                 "role": "시트 확정 대기 중",
-                "desc": "신규 11번째 팀 참전에 맞춰 선발될 메인 드라이버."
+                "desc": "신규 11번째 팀 참전에 맞춰 선발될 예정인 드라이버."
             }
         ]
     }
 ]
 
-# F1 공식 로고
+# F1 공식 로고 및 타이틀 Header
 st.markdown("""
     <div class="f1-header-container">
         <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
@@ -380,7 +402,7 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# 검색 및 필터링
+# 검색 및 드롭다운 선택 (요청에 따라 '전체 보기' 옵션 제거)
 col_search, col_filter = st.columns([3, 1])
 
 with col_search:
@@ -391,20 +413,16 @@ with col_search:
     )
 
 with col_filter:
-    team_list = ["전체 팀 보기"] + [t["team_kr"] for t in f1_database]
+    # '전체 보기' 제거 후 첫 번째 팀(맥라렌)을 기본 선택으로 설정
+    team_list = [t["team_kr"] for t in f1_database]
     selected_team = st.selectbox("팀 선택", team_list, label_visibility="collapsed")
 
-# 검색 처리
+# 필터링 로직 (검색어가 없으면 선택된 팀만 표시)
 filtered_teams = []
 query = search_query.strip().lower()
 
 for team in f1_database:
-    if selected_team != "전체 팀 보기" and team["team_kr"] != selected_team:
-        continue
-
-    if not query:
-        filtered_teams.append(team)
-    else:
+    if query:
         match_team = any(query in kw.lower() for kw in team["search_keywords"])
         match_driver = any(
             query in d["name_kr"].lower() or 
@@ -414,10 +432,13 @@ for team in f1_database:
         )
         if match_team or match_driver:
             filtered_teams.append(team)
+    else:
+        if team["team_kr"] == selected_team:
+            filtered_teams.append(team)
 
-# 팀 및 드라이버 카드 출력
+# 팀 및 드라이버 정보 출력
 if not filtered_teams:
-    st.error(f"'{search_query}' 검색 결과가 없습니다.")
+    st.error(f"'{search_query}'에 대한 검색 결과가 없습니다.")
 else:
     for team in filtered_teams:
         st.markdown(f"""
@@ -430,20 +451,15 @@ else:
             </div>
         """, unsafe_allow_html=True)
 
-        col_logo, col_drivers = st.columns([1, 2.5])
-
-        with col_logo:
-            # 전달받은 이미지 속 각 팀의 공식 로고 매칭 출력
-            st.image(team["logo_url"], width=180, caption=f"{team['team_kr']} 로고")
-
-        with col_drivers:
-            cols = st.columns(len(team["drivers"]))
-            for idx, driver in enumerate(team["drivers"]):
-                with cols[idx]:
-                    with st.popover(f"🏎️ #{driver['number']} {driver['name_kr']}", use_container_width=True):
-                        st.markdown(f"### #{driver['number']} {driver['name_kr']}")
-                        st.caption(f"{driver['name_en']} | {driver['country']}")
-                        st.write(f"**역할:** {driver['role']}")
-                        st.info(driver["desc"])
+        cols = st.columns(len(team["drivers"]))
+        for idx, driver in enumerate(team["drivers"]):
+            with cols[idx]:
+                with st.popover(f"🏎️ #{driver['number']} {driver['name_kr']}", use_container_width=True):
+                    st.markdown(f"### #{driver['number']} {driver['name_kr']}")
+                    st.caption(f"{driver['name_en']}")
+                    st.write(f"**국적:** {driver['country']}")
+                    st.write(f"**생년월일:** {driver['birth']}")
+                    st.write(f"**역할:** {driver['role']}")
+                    st.info(driver["desc"])
 
         st.markdown("<hr style='border-color: rgba(255,255,255,0.1); margin: 25px 0;'>", unsafe_allow_html=True)
