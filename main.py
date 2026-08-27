@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS - 상단 공백 제거, 로고와 탭 메뉴 한 줄 배치, 남은 공간 활용을 위한 사이드바 및 카드 스타일링
+# Custom CSS - 상단 공백 제거, 로고와 탭 메뉴 한 줄 배치 및 비율에 맞게 로고 크기 확대
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -33,12 +33,13 @@ st.markdown("""
         padding: 0 10px;
     }
 
+    /* F1 로고 가로세로 비율 유지하며 큼직하게 확대 */
     .f1-logo-img {
         width: 100%;
-        max-width: 200px;
+        max-width: 280px;
         height: auto;
         object-fit: contain;
-        filter: drop-shadow(0px 0px 10px rgba(225, 6, 0, 0.7));
+        filter: drop-shadow(0px 0px 12px rgba(225, 6, 0, 0.7));
     }
 
     .f1-accent-line {
@@ -235,12 +236,12 @@ f1_races_2026 = [
 if "selected_driver" not in st.session_state:
     st.session_state.selected_driver = None
 
-# [상단 배치] 로고와 카테고리(탭)를 한 줄에 나란히 배치
-col_logo, col_tabs = st.columns([1.2, 3.8])
+# [상단 배치] 비율이 맞도록 넉넉하게 키운 로고와 카테고리(탭)를 한 줄에 나란히 배치
+col_logo, col_tabs = st.columns([1.3, 3.7])
 
 with col_logo:
     st.markdown("""
-        <div style="display: flex; align-items: center; height: 100%;">
+        <div style="display: flex; align-items: center; height: 100%; padding-top: 5px;">
             <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
         </div>
     """, unsafe_allow_html=True)
@@ -251,11 +252,10 @@ with col_tabs:
 # F1 시그니처 빨간 선
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
 
-# [탭 1] 팀 검색 및 선수 선택 기능 (2단 레이아웃으로 남은 공간 활용 극대화)
+# [탭 1] 팀 검색 및 선수 선택 기능 (2단 레이아웃)
 with tab1:
     st.write("")
     
-    # 화면을 좌우(메인 콘텐츠 공간 vs 남은 우측 공간)로 분할
     main_col, side_col = st.columns([2.2, 1.8])
     
     with main_col:
@@ -300,7 +300,6 @@ with tab1:
             """, unsafe_allow_html=True)
 
     with side_col:
-        # 남은 우측 빈 공간에 '2026 시즌 퀵 인사이트 & 하이라이트' 정보 패널 배치
         st.markdown("""
             <div class="space-util-box">
                 <h4 style="color: #ff3333; margin-top: 0; font-family: 'Orbitron', sans-serif;">⚡ 2026 시즌 하이라이트</h4>
@@ -312,7 +311,6 @@ with tab1:
             </div>
         """, unsafe_allow_html=True)
         
-        # 추가 미니 위젯 (시즌 진행률 표시)
         completed_races = sum(1 for r in f1_races_2026 if r["status"] == "완료")
         total_races = len(f1_races_2026)
         progress_val = completed_races / total_races
