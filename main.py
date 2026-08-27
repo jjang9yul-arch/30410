@@ -2,51 +2,86 @@ import streamlit as st
 
 # 1. 페이지 설정
 st.set_page_config(
-    page_title="🏎️ F1 팬 허브 (Formula 1 Fan Hub)",
+    page_title="🏎️ F1ow",
     page_icon="🏎️",
     layout="wide"
 )
 
-# 다크 모드 스타일링 (F1 레이싱 테마)
+# 다크 모드 및 글씨 색상 흰색(White) 강제 적용 CSS
 st.markdown("""
     <style>
+    /* 전체 글꼴 색상을 흰색으로 기본 설정 */
+    html, body, [class*="css"], .stMarkdown, p, div, span, label {
+        color: #FFFFFF !important;
+    }
+    
+    /* 메인 로고 타이틀 F1ow */
     .main-title {
-        color: #E10600;
-        font-size: 2.8rem;
+        color: #E10600 !important;
+        font-size: 3.5rem;
         font-weight: 900;
         text-align: center;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        letter-spacing: 2px;
+        text-shadow: 0px 2px 10px rgba(225, 6, 0, 0.5);
     }
+    
+    /* 서브 타이틀 */
     .sub-title {
-        color: #FFFFFF;
+        color: #FFFFFF !important;
         border-left: 5px solid #E10600;
         padding-left: 12px;
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: bold;
         margin-top: 10px;
         margin-bottom: 20px;
     }
+    
+    /* 팀 정보 카드 박스 */
     .team-info-box {
-        background-color: #1f232a;
-        padding: 18px;
-        border-radius: 10px;
+        background-color: #1a1d24;
+        padding: 20px;
+        border-radius: 12px;
         border: 1px solid #333a46;
         margin-top: 15px;
     }
-    .driver-card {
-        background-color: #262b35;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 10px;
+    
+    /* 팀 로고 컨테이너 (흰색 배경으로 검은색 로고도 잘 보이게 처리) */
+    .logo-container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 12px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        margin-bottom: 15px;
+    }
+    
+    /* 레이스 일정 카드 */
+    .schedule-card {
+        background-color: #21252d;
+        padding: 16px;
+        border-radius: 10px;
+        margin-bottom: 12px;
         border-left: 4px solid #E10600;
+        border-top: 1px solid #2d323e;
+        border-right: 1px solid #2d323e;
+        border-bottom: 1px solid #2d323e;
+    }
+    
+    /* 셀렉트박스 글씨색 흰색 조정 */
+    .stSelectbox label {
+        color: #FFFFFF !important;
+        font-size: 1.1rem;
     }
     </style>
 """, unsafe_allow_html=True)
 
-# 2. F1 전체 10개 팀 데이터 (창단연도, 팀 특징, 선수 상세설명 포함)
+# 2. F1 전체 10개 팀 데이터 (안정된 로고 이미지 URL 및 흰색 글씨용 구조)
 F1_TEAMS = {
     "레드불 (Red Bull Racing)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Red_Bull_Racing_logo.svg/512px-Red_Bull_Racing_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/redbull.png",
         "founded": "2005년",
         "base": "영국 밀턴킨스",
         "features": "에어로다이내믹스 거장 에드리언 뉴이의 디자인 유산과 막강한 레이스 파워트레인을 바탕으로 2010년대 및 2020년대 초반 F1을 지배한 최고 명문 팀 중 하나입니다.",
@@ -66,7 +101,7 @@ F1_TEAMS = {
         ]
     },
     "페라리 (Scuderia Ferrari)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Ferrari-Logo.svg/380px-Ferrari-Logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/ferrari.png",
         "founded": "1929년 (F1 참가: 1950년)",
         "base": "이탈리아 마라넬로",
         "features": "F1 출범 첫해인 1950년부터 단 한 번도 빠짐없이 참가한 가장 오래되고 가장 성공적인 F1의 상징적인 명문 붉은 전차 팀입니다.",
@@ -86,7 +121,7 @@ F1_TEAMS = {
         ]
     },
     "맥라렌 (McLaren F1 Team)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/McLaren_Racing_logo.svg/512px-McLaren_Racing_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/mclaren.png",
         "founded": "1963년",
         "base": "영국 워킹",
         "features": "아일톤 세나, 알랭 프로스트 등 수많은 전설을 배출한 F1 역사의 명가. 최근 유려한 섀시 개발로 다시 정상권 경쟁에 진입했습니다.",
@@ -106,7 +141,7 @@ F1_TEAMS = {
         ]
     },
     "메르세데스 (Mercedes-AMG F1)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Mercedes_AMG_Petronas_F1_Logo.svg/512px-Mercedes_AMG_Petronas_F1_Logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/mercedes.png",
         "founded": "1954년 (재창단: 2010년)",
         "base": "영국 브랙리",
         "features": "터보 하이브리드 시대(2014~2021)에 8년 연속 컨스트럭터 챔피언이라는 전무후무한 대기록을 작성한 최첨단 엔지니어링의 정점 팀입니다.",
@@ -126,7 +161,7 @@ F1_TEAMS = {
         ]
     },
     "애스턴 마틴 (Aston Martin)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/53/Aston_Martin_logo.svg/512px-Aston_Martin_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/astonmartin.png",
         "founded": "2021년 (전신: 포스인디아/레이싱포인트)",
         "base": "영국 실버스톤",
         "features": "영국의 럭셔리 스포츠카 브랜드를 바탕으로 최신 시설의 신규 풍동과 공장을 건설하며 정상권을 목표로 공격적인 투자를 진행 중입니다.",
@@ -146,7 +181,7 @@ F1_TEAMS = {
         ]
     },
     "알핀 (Alpine F1 Team)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Alpine_F1_Team_Logo.svg/512px-Alpine_F1_Team_Logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/alpine.png",
         "founded": "2021년 (전신: 르노 F1)",
         "base": "영국 엔스톤 / 프랑스 비리샤티용",
         "features": "프랑스 르노 그룹의 스포츠카 브랜드 알핀을 대표하며, 견고한 워크스 팀의 인프라를 지니고 있습니다.",
@@ -166,7 +201,7 @@ F1_TEAMS = {
         ]
     },
     "윌리엄스 (Williams Racing)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Williams_Racing_2020_Logo.svg/512px-Williams_Racing_2020_Logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/williams.png",
         "founded": "1977년",
         "base": "영국 그로브",
         "features": "프랭크 윌리엄스 경에 의해 설립된 전통의 레이싱 전설 팀. 다수의 챔피언십 타이틀을 보유하고 있으며 재건을 도모하고 있습니다.",
@@ -186,7 +221,7 @@ F1_TEAMS = {
         ]
     },
     "하스 (Haas F1 Team)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Haas_F1_Team_logo.svg/512px-Haas_F1_Team_logo.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/haas.png",
         "founded": "2016년",
         "base": "미국 카나폴리스",
         "features": "미국 자본으로 설립된 팀으로, 효율적인 운영 방식과 페라리와의 파트너십을 통해 중위권 싸움에서 효율성을 극대화합니다.",
@@ -205,8 +240,8 @@ F1_TEAMS = {
             }
         ]
     },
-    "레이싱 불스 (Racing Bulls / RB)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/a/a2/Racing_Bulls_logo.svg/512px-Racing_Bulls_logo.svg.png",
+    "레이싱 불스 (RB)": {
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/rb.png",
         "founded": "2006년 (전신: 토로로소 / 알파타우리)",
         "base": "이탈리아 파엔차",
         "features": "레드불 레이싱의 자매 팀 역할을 하며 신예 드라이버들을 육성하고 빠른 스피드를 검증하는 이탈리아 기반의 팀입니다.",
@@ -226,7 +261,7 @@ F1_TEAMS = {
         ]
     },
     "자우버 / 아우디 (Sauber / Audi)": {
-        "logo": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Audi-Logo_2016.svg/512px-Audi-Logo_2016.svg.png",
+        "logo": "https://raw.githubusercontent.com/pubf/f1-assets/main/logos/audi.png",
         "founded": "1993년 (자우버)",
         "base": "스위스 힌빌",
         "features": "오랜 역사의 스위스 자우버 팀을 기반으로 독일 명문 브랜드 아우디(Audi)가 인수를 통해 2026년 워크스 팀으로 완전 전환합니다.",
@@ -247,7 +282,7 @@ F1_TEAMS = {
     }
 }
 
-# 3. 2026 F1 시즌 한글 일정표 데이터
+# 3. 한글 F1 일정표 데이터
 F1_SCHEDULE_KOREAN = [
     {"round": "제 1 라운드", "gp": "🇦🇺 호주 그랑프리", "circuit": "알버트 파크 서킷 (멜버른)", "date": "3월 6일 ~ 3월 8일"},
     {"round": "제 2 라운드", "gp": "🇨🇳 중국 그랑프리", "circuit": "상하이 인터내셔널 서킷", "date": "3월 13일 ~ 3월 15일"},
@@ -273,10 +308,10 @@ F1_SCHEDULE_KOREAN = [
     {"round": "제 22 라운드", "gp": "🇦🇪 아부다비 그랑프리", "circuit": "야스 마리나 서킷", "date": "12월 4일 ~ 12월 6일"}
 ]
 
-# 화면 상단 타이틀
-st.markdown('<div class="main-title">🏎️ FORMULA 1 WORLD CHAMPIONSHIP 🏁</div>', unsafe_allow_html=True)
+# 상단 메인 헤더 타이틀 (F1ow)
+st.markdown('<div class="main-title">🏎️ F1ow 🏁</div>', unsafe_allow_html=True)
 
-# 탭 메뉴 구성
+# 탭 구성
 tab1, tab2 = st.tabs(["🏎️ 팀 & 드라이버 검색", "📅 시즌 한글 일정표"])
 
 # [TAB 1] 팀 검색 & 드라이버 프로필
@@ -288,56 +323,55 @@ with tab1:
     if selected_team_name:
         team = F1_TEAMS[selected_team_name]
         
-        # 2열 레이아웃 (좌: 로고 및 팀 정보, 우: 드라이버 목록)
         col1, col2 = st.columns([1, 1.4])
         
         with col1:
-            # 팀 로고 이미지
-            st.image(team["logo"], use_container_width=True)
+            # 팀 로고 이미지 (흰색 라운딩 프레임 박스로 잘 보이게 감싸기)
+            st.markdown(f"""
+                <div class="logo-container">
+                    <img src="{team['logo']}" style="max-width:100%; max-height:150px; object-fit:contain;">
+                </div>
+            """, unsafe_allow_html=True)
             
-            # 팀 정보 상세 박스
+            # 팀 상세 정보 (흰색 글씨)
             st.markdown(f"""
                 <div class="team-info-box">
-                    <h3 style="color:#E10600; margin-top:0;">{selected_team_name}</h3>
-                    <p><b>🗓️ 창단 연도:</b> {team['founded']}</p>
-                    <p><b>📍 본거지:</b> {team['base']}</p>
+                    <h3 style="color:#E10600 !important; margin-top:0; font-weight:bold;">{selected_team_name}</h3>
+                    <p style="color:#FFFFFF !important;"><b>🗓️ 창단 연도:</b> {team['founded']}</p>
+                    <p style="color:#FFFFFF !important;"><b>📍 본거지:</b> {team['base']}</p>
                     <hr style="border-color:#444;">
-                    <p><b>💡 팀 특징 및 소개:</b><br>{team['features']}</p>
+                    <p style="color:#FFFFFF !important;"><b>💡 팀 특징 및 소개:</b><br>{team['features']}</p>
                 </div>
             """, unsafe_allow_html=True)
             
         with col2:
-            st.markdown("### 👨‍✈️ 소속 드라이버 라인업")
+            st.markdown("<h3 style='color:#FFFFFF !important;'>👨‍✈️ 소속 드라이버 라인업</h3>", unsafe_allow_html=True)
             st.info("💡 **선수 이름을 클릭하면 상세 설명과 이력이 나옵니다!**")
             
-            # 선수별 익스팬더(Expander)로 클릭 시 설명이 펼쳐지도록 구현
             for driver in team["drivers"]:
                 with st.expander(f"🏎️ **{driver['name']}** (Car No. {driver['no']})", expanded=False):
-                    st.markdown(f"**국적:** {driver['country']}")
-                    st.markdown(f"**엔트리 번호:** No. {driver['no']}")
+                    st.markdown(f"<span style='color:#FFFFFF !important;'><b>국적:</b> {driver['country']}</span>", unsafe_allow_html=True)
+                    st.markdown(f"<span style='color:#FFFFFF !important;'><b>엔트리 번호:</b> No. {driver['no']}</span>", unsafe_allow_html=True)
                     st.write("---")
-                    st.markdown(f"**📝 드라이버 소개:**")
-                    st.write(driver['bio'])
+                    st.markdown("<b style='color:#FFFFFF !important;'>📝 드라이버 소개:</b>", unsafe_allow_html=True)
+                    st.markdown(f"<p style='color:#E0E0E0 !important;'>{driver['bio']}</p>", unsafe_allow_html=True)
 
 # [TAB 2] 한글 일정표
 with tab2:
     st.markdown('<div class="sub-title">2026 F1 레이스 전체 일정 (한글)</div>', unsafe_allow_html=True)
-    
-    # 레이스 주말 세션안내
     st.caption("ℹ️ F1 레이스 위크엔드는 금요일 연습경기(FP1, FP2), 토요일 예선(Qualifying), 일요일 메인 레이스로 진행됩니다.")
     
-    # 2열 카드로 일정 배치
     for i in range(0, len(F1_SCHEDULE_KOREAN), 2):
         col_a, col_b = st.columns(2)
         
         with col_a:
             item = F1_SCHEDULE_KOREAN[i]
             st.markdown(f"""
-                <div class="driver-card">
-                    <span style="color:#E10600; font-weight:bold;">{item['round']}</span>
-                    <h4 style="margin:5px 0;">{item['gp']}</h4>
-                    <p style="margin:2px 0; color:#ccc;">📍 {item['circuit']}</p>
-                    <p style="margin:2px 0; color:#4dabf7; font-weight:bold;">🗓️ {item['date']}</p>
+                <div class="schedule-card">
+                    <span style="color:#E10600 !important; font-weight:bold;">{item['round']}</span>
+                    <h4 style="margin:5px 0; color:#FFFFFF !important;">{item['gp']}</h4>
+                    <p style="margin:2px 0; color:#D0D0D0 !important;">📍 {item['circuit']}</p>
+                    <p style="margin:2px 0; color:#64B5F6 !important; font-weight:bold;">🗓️ {item['date']}</p>
                 </div>
             """, unsafe_allow_html=True)
             
@@ -345,10 +379,10 @@ with tab2:
             with col_b:
                 item = F1_SCHEDULE_KOREAN[i+1]
                 st.markdown(f"""
-                    <div class="driver-card">
-                        <span style="color:#E10600; font-weight:bold;">{item['round']}</span>
-                        <h4 style="margin:5px 0;">{item['gp']}</h4>
-                        <p style="margin:2px 0; color:#ccc;">📍 {item['circuit']}</p>
-                        <p style="margin:2px 0; color:#4dabf7; font-weight:bold;">🗓️ {item['date']}</p>
+                    <div class="schedule-card">
+                        <span style="color:#E10600 !important; font-weight:bold;">{item['round']}</span>
+                        <h4 style="margin:5px 0; color:#FFFFFF !important;">{item['gp']}</h4>
+                        <p style="margin:2px 0; color:#D0D0D0 !important;">📍 {item['circuit']}</p>
+                        <p style="margin:2px 0; color:#64B5F6 !important; font-weight:bold;">🗓️ {item['date']}</p>
                     </div>
                 """, unsafe_allow_html=True)
