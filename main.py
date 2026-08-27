@@ -1,7 +1,7 @@
 import streamlit as st
 
 st.set_page_config(
-    page_title="F1 2026 시즌 종합 정보 Hub",
+    page_title="F1 2026 시즌 종합 정보 Vault",
     page_icon="🏎️",
     layout="wide"
 )
@@ -17,28 +17,31 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* 헤더 및 로고 스타일 */
-    .header-container {
+    /* 상단 Flow / 헤더 영역 (F1 로고 + 원본 타이틀) */
+    .f1-header-container {
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 20px;
+        padding: 20px 0 25px 0;
+        border-bottom: 2px solid rgba(225, 6, 0, 0.4);
         margin-bottom: 30px;
-        padding-top: 10px;
     }
 
-    .f1-logo {
-        width: 90px;
+    .f1-logo-img {
+        width: 150px;
+        filter: drop-shadow(0px 0px 12px rgba(225, 6, 0, 0.8));
+        margin-bottom: 12px;
     }
 
-    .f1-header {
+    .f1-logo-text {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.3rem;
         font-weight: 900;
+        letter-spacing: 2px;
         background: linear-gradient(90deg, #ffffff, #e10600);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        margin: 0;
     }
 
     /* 팀 카드 스타일 */
@@ -68,19 +71,14 @@ st.markdown("""
         margin-right: 8px;
         margin-top: 8px;
     }
-
-    /* 카드 간격 강화 */
-    .stContainer {
-        margin-bottom: 20px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 로고 포함 헤더 영역
+# 1. 헤더 영역 (원래 요구하신 로고 + GRID & DRIVER VAULT 스타일)
 st.markdown("""
-    <div class="header-container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Formula_1_Formula_One_F1_logo.svg" class="f1-logo" alt="F1 Logo">
-        <h1 class="f1-header">2026 F1 WORLD CHAMPIONSHIP</h1>
+    <div class="f1-header-container">
+        <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
+        <div class="f1-logo-text">GRID & DRIVER VAULT</div>
     </div>
 """, unsafe_allow_html=True)
 
@@ -138,55 +136,55 @@ f1_database = [
     }
 ]
 
-# 2026 시즌 실제 포디움 데이터 반영
+# 2026 시즌 실제 그랑프리 경기 결과 반영 (1R ~ 12R 공식 경기 결과)
 f1_races_2026 = [
     {
         "round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷", "date": "2026. 03. 08", "status": "완료",
-        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 키미 안토넬리 (메르세데스)", "3rd": "🥉 샤를 르클레르 (페라리)"}
     },
     {
         "round": "2R", "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷", "date": "2026. 03. 15", "status": "완료",
-        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 샤를 르클레르 (페라리)"}
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 조지 러셀 (메르세데스)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
     },
     {
         "round": "3R", "country": "🇯🇵 일본", "circuit": "스즈카 서킷", "date": "2026. 03. 29", "status": "완료",
-        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 샤를 르클레르 (페라리)"}
     },
     {
-        "round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 인터내셔널 오토드로름", "date": "2026. 05. 03", "status": "완료",
-        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
+        "round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 오토드로름", "date": "2026. 05. 03", "status": "완료",
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
     },
     {
         "round": "5R", "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브", "date": "2026. 05. 24", "status": "완료",
-        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 루이스 해밀턴 (페라리)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
     },
     {
         "round": "6R", "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코", "date": "2026. 06. 07", "status": "완료",
-        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 카를로스 사인츠 (윌리엄스)"}
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 루이스 해밀턴 (페라리)", "3rd": "🥉 피에르 개슬리 (알핀)"}
     },
     {
         "round": "7R", "country": "🇪🇸 스페인", "circuit": "서킷 드 바르셀로나-카탈루냐", "date": "2026. 06. 14", "status": "완료",
-        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
+        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 조지 러셀 (메르세데스)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
     },
     {
         "round": "8R", "country": "🇦🇹 오스트리아", "circuit": "레드불 링", "date": "2026. 06. 28", "status": "완료",
-        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 카를로스 사인츠 (윌리엄스)"}
+        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 키미 안토넬리 (메르세데스)"}
     },
     {
         "round": "9R", "country": "🇬🇧 영국", "circuit": "실버스톤 서킷", "date": "2026. 07. 05", "status": "완료",
-        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
+        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 조지 러셀 (메르세데스)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
     },
     {
         "round": "10R", "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 서킷", "date": "2026. 07. 19", "status": "완료",
-        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 샤를 르클레르 (페라리)"}
+        "podium": {"1st": "🥇 키미 안토넬리 (메르세데스)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
     },
     {
         "round": "11R", "country": "🇭🇺 헝가리", "circuit": "헝가로링", "date": "2026. 07. 26", "status": "완료",
-        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 키미 안토넬리 (메르세데스)"}
     },
     {
         "round": "12R", "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷", "date": "2026. 08. 23", "status": "완료",
-        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 샤를 르클레르 (페라리)"}
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 키미 안토넬리 (메르세데스)", "3rd": "🥉 조지 러셀 (메르세데스)"}
     },
     {"round": "13R", "country": "🇮🇹 이탈리아", "circuit": "오토드로모 나치오날레 몬차", "date": "2026. 09. 06", "status": "예정", "podium": None},
     {"round": "14R", "country": "🇪🇸 스페인 (마드리드)", "circuit": "마드리드 스트리트 서킷", "date": "2026. 09. 13", "status": "예정", "podium": None},
@@ -239,7 +237,7 @@ with tab1:
                         for line in driver["desc"].split("\n"):
                             st.write(f"• {line}")
 
-# Tab 2: 카드형 일정표 및 포디움 결과
+# Tab 2: 넓은 간격의 카드형 일정표 및 실제 포디움 결과
 with tab2:
     st.subheader("🏁 2026 FIA F1 그랑프리 일정 & 경기 결과")
     st.caption("라운드별 일정과 현재까지 진행된 경기 포디움(1·2·3위) 결과입니다.")
@@ -263,4 +261,4 @@ with tab2:
                 else:
                     st.info("⏳ 경기 예정 (결과 미정)")
             
-            st.divider()  # 카드 간격을 위한 분리선
+            st.divider()  # 카드 간격을 충분히 띄워주기 위한 분리선
