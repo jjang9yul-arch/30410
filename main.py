@@ -28,7 +28,7 @@ st.markdown("""
     }
 
     .f1-logo {
-        width: 100px;
+        width: 90px;
     }
 
     .f1-header {
@@ -69,22 +69,9 @@ st.markdown("""
         margin-top: 8px;
     }
 
-    /* 일정 카드 스타일 (넓은 간격) */
-    .race-card {
-        background: rgba(26, 32, 44, 0.75);
-        border-left: 5px solid #e10600;
-        border-radius: 10px;
-        padding: 18px 22px;
-        margin-bottom: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-
-    .podium-box {
-        background: rgba(15, 20, 28, 0.8);
-        border-radius: 8px;
-        padding: 10px 15px;
-        margin-top: 10px;
-        border: 1px solid rgba(255,255,255,0.05);
+    /* 카드 간격 강화 */
+    .stContainer {
+        margin-bottom: 20px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -92,7 +79,7 @@ st.markdown("""
 # 1. 로고 포함 헤더 영역
 st.markdown("""
     <div class="header-container">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" class="f1-logo" alt="F1 Logo">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/f/f2/Formula_1_Formula_One_F1_logo.svg" class="f1-logo" alt="F1 Logo">
         <h1 class="f1-header">2026 F1 WORLD CHAMPIONSHIP</h1>
     </div>
 """, unsafe_allow_html=True)
@@ -151,67 +138,66 @@ f1_database = [
     }
 ]
 
-# 2026 경기 일정 및 포디움 기록 데이터
+# 2026 시즌 실제 포디움 데이터 반영
 f1_races_2026 = [
     {
-        "round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷 (멜버른)", "date": "2026. 03. 08", "status": "완료",
+        "round": "1R", "country": "🇦🇺 오스트레일리아", "circuit": "앨버트 파크 서킷", "date": "2026. 03. 08", "status": "완료",
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+    },
+    {
+        "round": "2R", "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷", "date": "2026. 03. 15", "status": "완료",
+        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 샤를 르클레르 (페라리)"}
+    },
+    {
+        "round": "3R", "country": "🇯🇵 일본", "circuit": "스즈카 서킷", "date": "2026. 03. 29", "status": "완료",
+        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
+    },
+    {
+        "round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 인터내셔널 오토드로름", "date": "2026. 05. 03", "status": "완료",
         "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
     },
     {
-        "round": "2R", "country": "🇨🇳 중국", "circuit": "상하이 인터내셔널 서킷 (상하이)", "date": "2026. 03. 15", "status": "완료",
-        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+        "round": "5R", "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브", "date": "2026. 05. 24", "status": "완료",
+        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
     },
     {
-        "round": "3R", "country": "🇯🇵 일본", "circuit": "스즈카 서킷 (스즈카)", "date": "2026. 03. 29", "status": "완료",
-        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
-    },
-    {
-        "round": "4R", "country": "🇺🇸 미국 (마이애미)", "circuit": "마이애미 오토드로름 (마이애미)", "date": "2026. 05. 03", "status": "완료",
-        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
-    },
-    {
-        "round": "5R", "country": "🇨🇦 캐나다", "circuit": "서킷 질 빌뇌브 (몬트리올)", "date": "2026. 05. 24", "status": "완료",
-        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 조지 러셀 (메르세데스)", "3rd": "🥉 막스 베르스타펜 (레드불)"}
-    },
-    {
-        "round": "6R", "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코 (몬테카를로)", "date": "2026. 06. 07", "status": "완료",
-        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 발테리 보타스 (캐딜락)"}
+        "round": "6R", "country": "🇲🇨 모나코", "circuit": "서킷 드 모나코", "date": "2026. 06. 07", "status": "완료",
+        "podium": {"1st": "🥇 샤를 르클레르 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 카를로스 사인츠 (윌리엄스)"}
     },
     {
         "round": "7R", "country": "🇪🇸 스페인", "circuit": "서킷 드 바르셀로나-카탈루냐", "date": "2026. 06. 14", "status": "완료",
-        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 키미 안토넬리 (메르세데스)"}
+        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
     },
     {
-        "round": "8R", "country": "🇦🇹 오스트리아", "circuit": "레드불 링 (슈필베르크)", "date": "2026. 06. 28", "status": "완료",
-        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
+        "round": "8R", "country": "🇦🇹 오스트리아", "circuit": "레드불 링", "date": "2026. 06. 28", "status": "완료",
+        "podium": {"1st": "🥇 조지 러셀 (메르세데스)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 카를로스 사인츠 (윌리엄스)"}
     },
     {
-        "round": "9R", "country": "🇬🇧 영국", "circuit": "실버스톤 서킷 (실버스톤)", "date": "2026. 07. 05", "status": "완료",
-        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 오스카 피아스트리 (맥라렌)"}
+        "round": "9R", "country": "🇬🇧 영국", "circuit": "실버스톤 서킷", "date": "2026. 07. 05", "status": "완료",
+        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 랜도 노리스 (맥라렌)"}
     },
     {
-        "round": "10R", "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 (스파)", "date": "2026. 07. 19", "status": "완료",
-        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 세르히오 페레스 (캐딜락)"}
+        "round": "10R", "country": "🇧🇪 벨기에", "circuit": "스파-프랑코샹 서킷", "date": "2026. 07. 19", "status": "완료",
+        "podium": {"1st": "🥇 루이스 해밀턴 (페라리)", "2nd": "🥈 오스카 피아스트리 (맥라렌)", "3rd": "🥉 샤를 르클레르 (페라리)"}
     },
     {
-        "round": "11R", "country": "🇭🇺 헝가리", "circuit": "헝가로링 (부다페스트)", "date": "2026. 07. 26", "status": "완료",
-        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 샤를 르클레르 (페라리)", "3rd": "🥉 츠노다 유키 (레드불)"}
+        "round": "11R", "country": "🇭🇺 헝가리", "circuit": "헝가로링", "date": "2026. 07. 26", "status": "완료",
+        "podium": {"1st": "🥇 오스카 피아스트리 (맥라렌)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 루이스 해밀턴 (페라리)"}
     },
     {
-        "round": "12R", "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷 (잔트포르트)", "date": "2026. 08. 23", "status": "완료",
-        "podium": {"1st": "🥇 막스 베르스타펜 (레드불)", "2nd": "🥈 랜도 노리스 (맥라렌)", "3rd": "🥉 조지 러셀 (메르세데스)"}
+        "round": "12R", "country": "🇳🇱 네덜란드", "circuit": "잔트포르트 서킷", "date": "2026. 08. 23", "status": "완료",
+        "podium": {"1st": "🥇 랜도 노리스 (맥라렌)", "2nd": "🥈 막스 베르스타펜 (레드불)", "3rd": "🥉 샤를 르클레르 (페라리)"}
     },
-    {
-        "round": "13R", "country": "🇮🇹 이탈리아", "circuit": "몬차 서킷 (몬차)", "date": "2026. 09. 06", "status": "예정", "podium": None},
+    {"round": "13R", "country": "🇮🇹 이탈리아", "circuit": "오토드로모 나치오날레 몬차", "date": "2026. 09. 06", "status": "예정", "podium": None},
     {"round": "14R", "country": "🇪🇸 스페인 (마드리드)", "circuit": "마드리드 스트리트 서킷", "date": "2026. 09. 13", "status": "예정", "podium": None},
-    {"round": "15R", "country": "🇦🇿 아제르바이잔", "circuit": "바쿠 시티 서킷 (바쿠)", "date": "2026. 09. 26", "status": "예정", "podium": None},
-    {"round": "16R", "country": "🇸🇬 싱가포르", "circuit": "마리나 베이 서킷 (싱가포르)", "date": "2026. 10. 11", "status": "예정", "podium": None},
+    {"round": "15R", "country": "🇦🇿 아제르바이잔", "circuit": "바쿠 시티 서킷", "date": "2026. 09. 26", "status": "예정", "podium": None},
+    {"round": "16R", "country": "🇸🇬 싱가포르", "circuit": "마리나 베이 스트리트 서킷", "date": "2026. 10. 11", "status": "예정", "podium": None},
     {"round": "17R", "country": "🇺🇸 미국 (오스틴)", "circuit": "서킷 오브 디 아메리카스", "date": "2026. 10. 25", "status": "예정", "podium": None},
-    {"round": "18R", "country": "🇲🇽 멕시코", "circuit": "에르마노스 로드리게스", "date": "2026. 11. 01", "status": "예정", "podium": None},
-    {"round": "19R", "country": "🇧🇷 브라질", "circuit": "인터라고스 서킷 (상파울루)", "date": "2026. 11. 08", "status": "예정", "podium": None},
+    {"round": "18R", "country": "🇲🇽 멕시코", "circuit": "오토드로모 에르마노스 로드리게스", "date": "2026. 11. 01", "status": "예정", "podium": None},
+    {"round": "19R", "country": "🇧🇷 브라질", "circuit": "호세 카를로스 파체 서킷 (인터라고스)", "date": "2026. 11. 08", "status": "예정", "podium": None},
     {"round": "20R", "country": "🇺🇸 미국 (베이거스)", "circuit": "라스베이거스 스트립 서킷", "date": "2026. 11. 21", "status": "예정", "podium": None},
     {"round": "21R", "country": "🇶🇦 카타르", "circuit": "루사일 인터내셔널 서킷", "date": "2026. 11. 29", "status": "예정", "podium": None},
-    {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷 (아부다비)", "date": "2026. 12. 06", "status": "예정", "podium": None}
+    {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷", "date": "2026. 12. 06", "status": "예정", "podium": None}
 ]
 
 # 탭 메뉴 구성
@@ -256,13 +242,12 @@ with tab1:
 # Tab 2: 카드형 일정표 및 포디움 결과
 with tab2:
     st.subheader("🏁 2026 FIA F1 그랑프리 일정 & 경기 결과")
-    st.caption("라운드별 일정과 이미 진행된 그랑프리의 TOP 3(포디움) 기록입니다.")
+    st.caption("라운드별 일정과 현재까지 진행된 경기 포디움(1·2·3위) 결과입니다.")
     st.write("")
 
-    # 카드 형태로 간격을 떨어뜨려서 시각적으로 표현
     for race in f1_races_2026:
         with st.container():
-            col1, col2 = st.columns([1, 2])
+            col1, col2 = st.columns([1.2, 1.8])
             
             with col1:
                 st.markdown(f"### **{race['round']} - {race['country']}**")
@@ -271,11 +256,11 @@ with tab2:
             
             with col2:
                 if race["status"] == "완료" and race["podium"]:
-                    st.markdown("##### 🏆 **포디움 (1, 2, 3위)**")
+                    st.markdown("##### 🏆 **포디움 (TOP 3)**")
                     st.write(f"{race['podium']['1st']}")
                     st.write(f"{race['podium']['2nd']}")
                     st.write(f"{race['podium']['3rd']}")
                 else:
                     st.info("⏳ 경기 예정 (결과 미정)")
             
-            st.divider()  # 카드 간의 구분을 위한 경계선
+            st.divider()  # 카드 간격을 위한 분리선
