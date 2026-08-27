@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS - 대형 F1 로고, 상단으로 당겨진 빨간 라인, 백과사전풍 설명 제거 및 하얀 글씨
+# Custom CSS - Streamlit 기본 상단 여백 강제 제거 및 로고/빨간 줄 맨 위로 밀착
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -17,32 +17,38 @@ st.markdown("""
         font-family: 'Noto Sans KR', sans-serif;
     }
 
-    /* 상단 헤더 컨테이너: 여백을 바짝 당겨 위로 배치 */
+    /* Streamlit 기본 상단 공백(padding)을 완전히 제거하여 위로 바짝 붙임 */
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 2rem !important;
+    }
+
+    /* 상단 헤더 컨테이너 */
     .f1-header-container {
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 5px 0 0 0;
-        margin-bottom: 20px;
+        padding: 0px;
+        margin-top: -20px;
+        margin-bottom: 15px;
     }
 
-    /* F1 로고 크게 복원 */
+    /* F1 로고 크기 */
     .f1-logo-img {
         width: 100%;
-        max-width: 550px;
+        max-width: 380px;
         height: auto;
         object-fit: contain;
-        filter: drop-shadow(0px 0px 22px rgba(225, 6, 0, 0.9));
-        margin-bottom: 8px;
+        filter: drop-shadow(0px 0px 18px rgba(225, 6, 0, 0.8));
+        margin-bottom: 5px;
     }
 
-    /* 빨간 줄을 로고 바로 밑으로 바짝 당겨서 얇게 배치 */
+    /* 빨간 줄을 로고 바로 밑으로 바짝 끌어당김 */
     .f1-accent-line {
         width: 100%;
-        max-width: 1200px;
-        height: 3px;
+        height: 2px;
         background: linear-gradient(90deg, transparent, #e10600, transparent);
-        margin-top: -2px;
+        margin-top: 2px;
     }
 
     /* 하얀 글씨 보장 */
@@ -79,7 +85,7 @@ st.markdown("""
         margin-top: 8px;
     }
 
-    /* 드라이버 프로필 카드 (백과사전식 장문 제거, 깔끔한 정보형) */
+    /* 드라이버 프로필 카드 */
     .driver-card {
         background: #111622;
         border-radius: 10px;
@@ -105,7 +111,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 1. 상단 대형 F1 로고 및 위로 당겨진 빨간 줄 헤더
+# 1. 상단 맨 위로 바짝 붙은 F1 로고 및 빨간 줄 헤더
 st.markdown("""
     <div class="f1-header-container">
         <img class="f1-logo-img" src="https://upload.wikimedia.org/wikipedia/commons/3/33/F1.svg" alt="F1 Logo">
@@ -220,12 +226,12 @@ f1_races_2026 = [
     {"round": "22R", "country": "🇦🇪 아랍에미리트", "circuit": "야스 마리나 서킷", "date": "2026.12.06", "status": "예정", "podium": []}
 ]
 
-# 탭 메뉴 구성
-tab1, tab2, tab3 = st.tabs(["🔍 F1 팀 검색 및 선수 정보", "🏎️ 2026 전체 11개 팀 라인업", "📅 2026 그랑프리 일정 & 포디움"])
+# 탭 메뉴 구성 (라인업 탭을 완전히 없애고 딱 2개만 유지)
+tab1, tab2 = st.tabs(["🔍 F1 팀 검색 및 선수 정보", "📅 2026 그랑프리 일정 & 포디움"])
 
 # [탭 1] 팀 검색 및 소속 선수 확인
 with tab1:
-    st.subheader("🔍 F1 팀 및 소속 선수 검색")
+    st.subheader("🔍 F1 팀 검색 및 소속 선수 확인")
     st.write("")
     
     team_name_list = [t["team_kr"] for t in f1_teams_database]
@@ -257,36 +263,8 @@ with tab1:
                         </div>
                     """, unsafe_allow_html=True)
 
-# [탭 2] 2026 전체 11개 팀 및 22명 선수 리스트
+# [탭 2] 2026 그랑프리 일정표 및 포디움 결과
 with tab2:
-    st.subheader("🏁 2026 시즌 전체 11개 팀 & 22명 드라이버")
-    st.write("")
-
-    for team in f1_teams_database:
-        st.markdown(f"""
-            <div class="team-card" style="border-left: 6px solid {team['color']};">
-                <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
-                <div style="margin-top: 8px;">
-                    <span class="stat-badge">감독: {team['principal']}</span>
-                    <span class="stat-badge">엔진: {team['power_unit']}</span>
-                </div>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        c_cols = st.columns(2)
-        for i, driver in enumerate(team["drivers"]):
-            with c_cols[i]:
-                st.markdown(f"""
-                    <div class="driver-card">
-                        <div class="driver-num">#{driver['number']}</div>
-                        <div class="driver-name">{driver['name_kr']} ({driver['name_en']})</div>
-                        <p style="margin: 4px 0; font-size: 0.9rem;">국적: {driver['country']} | 생년월일: {driver['birth']}</p>
-                    </div>
-                """, unsafe_allow_html=True)
-        st.write("---")
-
-# [탭 3] 2026 그랑프리 일정표 및 포디움 결과
-with tab3:
     st.subheader("📅 2026 FIA F1 월드 챔피언십 일정 & 포디움 결과")
     st.write("")
 
