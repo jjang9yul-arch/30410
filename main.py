@@ -6,7 +6,7 @@ st.set_page_config(
     layout="wide"
 )
 
-# Custom CSS - 상단 공백을 없애고 로고와 탭(카테고리) 메뉴를 한 줄로 나란히 밀착 배치
+# Custom CSS - 상단 공백 제거, 로고와 탭 메뉴 한 줄 배치, 남은 공간 활용을 위한 사이드바 및 카드 스타일링
 st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Noto+Sans+KR:wght@400;700;900&display=swap');
@@ -23,7 +23,7 @@ st.markdown("""
         padding-bottom: 2rem !important;
     }
 
-    /* 상단 헤더 컨테이너 (로고와 탭 메뉴를 한 줄에 배치하기 위함) */
+    /* 상단 헤더 컨테이너 (로고와 탭 메뉴를 한 줄에 배치) */
     .f1-top-layout {
         display: flex;
         align-items: center;
@@ -48,7 +48,7 @@ st.markdown("""
         margin-bottom: 15px;
     }
 
-    /* Streamlit 기본 탭(카테고리) 디자인을 로고 우측으로 바짝 끌어올림 */
+    /* Streamlit 기본 탭(카테고리) 디자인 밀착 */
     .stTabs {
         margin-top: -15px;
     }
@@ -111,6 +111,15 @@ st.markdown("""
         padding: 24px;
         margin-top: 20px;
         box-shadow: 0 6px 25px rgba(225, 6, 0, 0.3);
+    }
+
+    /* 남은 공간 활용을 위한 위젯/카드 박스 */
+    .space-util-box {
+        background: rgba(18, 23, 33, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -226,7 +235,7 @@ f1_races_2026 = [
 if "selected_driver" not in st.session_state:
     st.session_state.selected_driver = None
 
-# [상단 배치] 로고와 카테고리(탭)를 한 줄에 나란히 바짝 붙여 배치
+# [상단 배치] 로고와 카테고리(탭)를 한 줄에 나란히 배치
 col_logo, col_tabs = st.columns([1.2, 3.8])
 
 with col_logo:
@@ -242,48 +251,79 @@ with col_tabs:
 # F1 시그니처 빨간 선
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
 
-# [탭 1] 팀 검색 및 선수 선택 기능
+# [탭 1] 팀 검색 및 선수 선택 기능 (2단 레이아웃으로 남은 공간 활용 극대화)
 with tab1:
     st.write("")
-    team_name_list = [t["team_kr"] for t in f1_teams_database]
-    selected_search_team = st.selectbox("검색할 팀 선택", team_name_list)
     
-    for team in f1_teams_database:
-        if team["team_kr"] == selected_search_team:
-            st.markdown(f"""
-                <div class="team-card" style="border-top: 5px solid {team['color']};">
-                    <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
-                    <div style="margin-top: 10px;">
-                        <span class="stat-badge">감독: {team['principal']}</span>
-                        <span class="stat-badge">파워 유닛: {team['power_unit']}</span>
+    # 화면을 좌우(메인 콘텐츠 공간 vs 남은 우측 공간)로 분할
+    main_col, side_col = st.columns([2.2, 1.8])
+    
+    with main_col:
+        team_name_list = [t["team_kr"] for t in f1_teams_database]
+        selected_search_team = st.selectbox("검색할 팀 선택", team_name_list)
+        
+        for team in f1_teams_database:
+            if team["team_kr"] == selected_search_team:
+                st.markdown(f"""
+                    <div class="team-card" style="border-top: 5px solid {team['color']};">
+                        <div class="team-title" style="color: {team['color']};">{team['team_en']} ({team['team_kr']})</div>
+                        <div style="margin-top: 10px;">
+                            <span class="stat-badge">감독: {team['principal']}</span>
+                            <span class="stat-badge">파워 유닛: {team['power_unit']}</span>
+                        </div>
                     </div>
+                """, unsafe_allow_html=True)
+                
+                st.markdown("### 👥 소속 드라이버 선택")
+                d_cols = st.columns(2)
+                
+                for idx, driver in enumerate(team["drivers"]):
+                    with d_cols[idx]:
+                        btn_label = f"#{driver['number']}   |   {driver['name_kr']}"
+                        if st.button(btn_label, key=f"btn_{driver['number']}_{driver['name_en']}", use_container_width=True):
+                            st.session_state.selected_driver = driver
+
+        if st.session_state.selected_driver:
+            d = st.session_state.selected_driver
+            st.markdown(f"""
+                <div class="driver-detail-box">
+                    <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 10px;">
+                        <span class="driver-big-num">#{d['number']}</span>
+                        <span class="driver-big-name">{d['name_kr']} ({d['name_en']})</span>
+                    </div>
+                    <p style="margin: 4px 0; font-size: 1rem; color: #cbd5e1;"><b>국적:</b> {d['country']} &nbsp;|&nbsp; <b>생년월일:</b> {d['birth']}</p>
+                    <hr style="border-color: rgba(255,255,255,0.15); margin: 12px 0;">
+                    <p style="font-size: 1.05rem; line-height: 1.7; color: #f1f5f9; margin-bottom: 0;">
+                        {d['story']}
+                    </p>
                 </div>
             """, unsafe_allow_html=True)
-            
-            st.markdown("### 👥 소속 드라이버 선택")
-            d_cols = st.columns(2)
-            
-            for idx, driver in enumerate(team["drivers"]):
-                with d_cols[idx]:
-                    btn_label = f"#{driver['number']}   |   {driver['name_kr']} ({driver['name_en']})"
-                    if st.button(btn_label, key=f"btn_{driver['number']}_{driver['name_en']}", use_container_width=True):
-                        st.session_state.selected_driver = driver
 
-    if st.session_state.selected_driver:
-        d = st.session_state.selected_driver
-        st.markdown(f"""
-            <div class="driver-detail-box">
-                <div style="display: flex; align-items: baseline; gap: 15px; margin-bottom: 10px;">
-                    <span class="driver-big-num">#{d['number']}</span>
-                    <span class="driver-big-name">{d['name_kr']} ({d['name_en']})</span>
-                </div>
-                <p style="margin: 4px 0; font-size: 1rem; color: #cbd5e1;"><b>국적:</b> {d['country']} &nbsp;|&nbsp; <b>생년월일:</b> {d['birth']}</p>
-                <hr style="border-color: rgba(255,255,255,0.15); margin: 12px 0;">
-                <p style="font-size: 1.05rem; line-height: 1.7; color: #f1f5f9; margin-bottom: 0;">
-                    {d['story']}
+    with side_col:
+        # 남은 우측 빈 공간에 '2026 시즌 퀵 인사이트 & 하이라이트' 정보 패널 배치
+        st.markdown("""
+            <div class="space-util-box">
+                <h4 style="color: #ff3333; margin-top: 0; font-family: 'Orbitron', sans-serif;">⚡ 2026 시즌 하이라이트</h4>
+                <p style="font-size: 0.95rem; line-height: 1.6; color: #cbd5e1;">
+                • <b>2026 규정 대변혁:</b> 완전히 새롭게 바뀐 액티브 파워유닛과 경량화된 공기역학 머신 도입.<br><br>
+                • <b>신생 팀 합류:</b> 캐딜락 F1 팀이 새롭게 그리드에 합류하여 총 11개 팀 체제로 확장.<br><br>
+                • <b>치열한 세대교체:</b> 메르세데스의 앤토넬리를 비롯한 영건들과 베테랑들의 숨막히는 타이틀 매치 진행 중!
                 </p>
             </div>
         """, unsafe_allow_html=True)
+        
+        # 추가 미니 위젯 (시즌 진행률 표시)
+        completed_races = sum(1 for r in f1_races_2026 if r["status"] == "완료")
+        total_races = len(f1_races_2026)
+        progress_val = completed_races / total_races
+        
+        st.markdown(f"""
+            <div class="space-util-box" style="margin-top: 15px;">
+                <h4 style="color: #27F4D2; margin-top: 0; font-family: 'Orbitron', sans-serif;">📊 2026 캘린더 진행률</h4>
+                <p style="font-size: 0.95rem; color: #e2e8f0; margin-bottom: 8px;">총 {total_races}라운드 중 <b>{completed_races}라운드</b> 완료</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.progress(progress_val)
 
 # [탭 2] 2026 그랑프리 일정표 및 포디움 결과
 with tab2:
