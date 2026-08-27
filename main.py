@@ -117,7 +117,7 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# 2026 팀 데이터
+# 2026 팀 및 확정 드라이버 번호 데이터
 f1_teams_database = [
     {
         "team_en": "Mercedes-AMG Petronas F1 Team", "team_kr": "메르세데스", "color": "#27F4D2", "principal": "Toto Wolff", "power_unit": "Mercedes",
@@ -192,7 +192,7 @@ f1_teams_database = [
     {
         "team_en": "Cadillac F1 Team", "team_kr": "캐딜락 F1 팀", "color": "#FFD700", "principal": "Graeme Lowdon", "power_unit": "Ferrari",
         "drivers": [
-            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 핀란드 🇫🇮", "birth": "1989.08.28", "story": "풍부한 우승 경력과 방대한 머신 개발 데이터를 지닌 베테랑 드라이버입니다."},
+            {"name_en": "Valtteri Bottas", "name_kr": "발테리 보타스", "number": "77", "country": "핀란드 🇫🇮", "birth": "1989.08.28", "story": "풍부한 우승 경력과 방대한 머신 개발 데이터를 지닌 베테랑 드라이버입니다."},
             {"name_en": "Sergio Pérez", "name_kr": "세르히오 페레스", "number": "11", "country": "멕시코 🇲🇽", "birth": "1990.01.26", "story": "시가지 서킷에서 특히 강한 면모를 보이며 타이어 관리 능력이 뛰어납니다."}
         ]
     }
@@ -227,7 +227,10 @@ f1_races_2026 = [
 if "selected_driver" not in st.session_state:
     st.session_state.selected_driver = None
 
-# 상단 로고 및 탭 배치 (기본 기능 유지)
+if "previous_team" not in st.session_state:
+    st.session_state.previous_team = None
+
+# 상단 로고 및 탭 배치
 col_logo, col_tabs = st.columns([1.3, 3.7])
 
 with col_logo:
@@ -245,7 +248,7 @@ with col_tabs:
 
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
 
-# [탭 1] 기존 팀 & 선수 정보 화면
+# [탭 1] 팀 & 선수 정보 화면
 with tab1:
     st.write("")
     main_col, side_col = st.columns([2.2, 1.8])
@@ -253,6 +256,11 @@ with tab1:
     with main_col:
         team_name_list = [t["team_kr"] for t in f1_teams_database]
         selected_search_team = st.selectbox("검색할 팀 선택", team_name_list)
+        
+        # 팀을 변경했을 때 이전 드라이버 선택 기록 초기화
+        if st.session_state.previous_team != selected_search_team:
+            st.session_state.selected_driver = None
+            st.session_state.previous_team = selected_search_team
         
         for team in f1_teams_database:
             if team["team_kr"] == selected_search_team:
@@ -322,7 +330,7 @@ with tab2:
     st.write("2026년은 새로운 엔진 규정과 11개의 컨스트럭터가 격돌하는 대변혁의 시즌입니다.")
 
 # ==========================================
-# ⬇️ 요청하신 부분: 아래 빈 곳에 배치된 전체 일정표 & 포디움 결과
+# ⬇️ 메인 화면 아래쪽 빈 공간: 전체 일정표 & 포디움 결과
 # ==========================================
 st.markdown("<br>", unsafe_allow_html=True)
 st.markdown('<div class="f1-accent-line"></div>', unsafe_allow_html=True)
@@ -330,7 +338,6 @@ st.markdown("## 📅 2026 시즌 전체 그랑프리 일정표 및 포디움 결
 st.write("지금까지 완료된 경기의 포디움(TOP 3) 기록과 다가오는 전체 레이스 일정을 확인하세요.")
 st.write("")
 
-# 2단 레이아웃으로 좌측: 전체 일정표 / 우측: 완료된 경기 포디움 결과
 schedule_col, podium_col = st.columns(2)
 
 with schedule_col:
