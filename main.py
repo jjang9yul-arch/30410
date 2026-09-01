@@ -2,12 +2,127 @@ import streamlit as st
 
 # 1. 페이지 기본 설정
 st.set_page_config(
-    page_title="F1ow - Formula 1 Fan Hub",
+    page_title="F1 - Formula 1 Fan Hub",
     page_icon="🏎️",
     layout="wide"
 )
 
-# 2. F1 팀 정보 및 팀별 대표 색상 (Hex Code)
+# 2. 강제 가독성 확보 및 F1 테마 CSS
+st.markdown("""
+    <style>
+    /* 배경 설정 */
+    .stApp {
+        background-color: #0b0e14;
+    }
+    
+    html, body, [class*="css"], p, span, div, h1, h2, h3, h4, h5, h6 {
+        color: #FFFFFF;
+    }
+
+    /* selectbox 드롭다운 텍스트 및 선택창을 확실한 흰색 배경 + 검은색 글씨로 강제 수정 */
+    div[data-baseweb="select"] {
+        background-color: #ffffff !important;
+        border-radius: 8px !important;
+    }
+    div[data-baseweb="select"] * {
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+    div[data-baseweb="popover"] * {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-weight: bold !important;
+    }
+    li[role="option"]:hover {
+        background-color: #e0e0e0 !important;
+    }
+
+    /* F1 상단 로고 디자인 */
+    .f1-logo-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        padding: 15px 0;
+        border-bottom: 3px solid #E10600;
+        margin-bottom: 25px;
+        background: linear-gradient(90deg, #161b22 0%, #0b0e14 50%, #161b22 100%);
+        border-radius: 10px;
+    }
+    .f1-logo-text {
+        color: #E10600 !important;
+        font-size: 3.5rem;
+        font-weight: 900;
+        letter-spacing: -2px;
+        font-family: 'Impact', 'Arial Black', sans-serif;
+        font-style: italic;
+    }
+    .f1-logo-sub {
+        color: #FFFFFF !important;
+        font-size: 1.2rem;
+        font-weight: bold;
+        letter-spacing: 2px;
+    }
+
+    /* 서브 타이틀 */
+    .sub-title {
+        color: #FFFFFF !important;
+        border-left: 5px solid #E10600;
+        padding-left: 12px;
+        font-size: 1.4rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+
+    /* 팀 정보 요약 박스 */
+    .team-summary-box {
+        background: linear-gradient(145deg, #1c2128 0%, #13171d 100%);
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #30363d;
+        margin-bottom: 15px;
+    }
+
+    /* 스케줄 카드 스타일 */
+    .gp-card {
+        background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+    .gp-card.completed {
+        border-left: 6px solid #484f58;
+        opacity: 0.75;
+    }
+    .gp-card.next-race {
+        border-left: 6px solid #E10600;
+        background: linear-gradient(135deg, #221013 0%, #0d1117 100%);
+    }
+    .gp-card.upcoming {
+        border-left: 6px solid #238636;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 3px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+    .badge-completed { background-color: #30363d; color: #8b949e !important; }
+    .badge-next { background-color: #E10600; color: #FFFFFF !important; }
+    .badge-upcoming { background-color: #238636; color: #FFFFFF !important; }
+
+    .gp-round { font-size: 0.85rem; font-weight: bold; color: #E10600 !important; }
+    .gp-title { font-size: 1.25rem; font-weight: bold; color: #FFFFFF !important; margin: 2px 0; }
+    .gp-circuit { font-size: 0.9rem; color: #8b949e !important; }
+    .gp-date { font-size: 0.95rem; font-weight: bold; color: #f0f6fc !important; }
+    </style>
+""", unsafe_allow_html=True)
+
+# 3. F1 팀 정보 (대표 색상 및 개별 데이터)
 F1_TEAMS = {
     "레드불 (Red Bull Racing)": {
         "color": "#3671C6",
@@ -211,244 +326,83 @@ F1_TEAMS = {
     }
 }
 
-# 3. 2026 시즌 일정 데이터
+# 4. 2026 시즌 일정 데이터
 F1_SCHEDULE_KOREAN = [
-    {"round": "ROUND 01", "gp": "🇦🇺 호주 그랑프리", "circuit": "알버트 파크 서킷 (멜버른)", "date": "3월 6일 - 3월 8일", "status": "COMPLETED"},
+    {"round": "ROUND 01", "gp": "🇦🇺 호주 그랑프리", "circuit": "알버트 파크 서킷", "date": "3월 6일 - 3월 8일", "status": "COMPLETED"},
     {"round": "ROUND 02", "gp": "🇨🇳 중국 그랑프리", "circuit": "상하이 인터내셔널 서킷", "date": "3월 13일 - 3월 15일", "status": "COMPLETED"},
     {"round": "ROUND 03", "gp": "🇯🇵 일본 그랑프리", "circuit": "스즈카 서킷", "date": "3월 27일 - 3월 29일", "status": "COMPLETED"},
-    {"round": "ROUND 04", "gp": "🇺🇸 마이애미 그랑프리", "circuit": "마이애미 인터네셔널 오토드롬", "date": "5월 1일 - 5월 3일", "status": "COMPLETED"},
+    {"round": "ROUND 04", "gp": "🇺🇸 마이애미 그랑프리", "circuit": "마이애미 오토드롬", "date": "5월 1일 - 5월 3일", "status": "COMPLETED"},
     {"round": "ROUND 05", "gp": "🇨🇦 캐나다 그랑프리", "circuit": "질 빌뇌브 서킷", "date": "5월 22일 - 5월 24일", "status": "COMPLETED"},
-    {"round": "ROUND 06", "gp": "🇲🇨 모나코 그랑프리", "circuit": "서킷 드 모나코 (몬테카를로)", "date": "6월 5일 - 6월 7일", "status": "COMPLETED"},
-    {"round": "ROUND 07", "gp": "🇪🇸 스페인 바르셀로나 GP", "circuit": "서킷 드 바르셀로나-카탈루냐", "date": "6월 12일 - 6월 14일", "status": "COMPLETED"},
-    {"round": "ROUND 08", "gp": "🇦🇹 오스트리아 그랑프리", "circuit": "레드불 링 (슈필베르크)", "date": "6월 26일 - 6월 28일", "status": "COMPLETED"},
+    {"round": "ROUND 06", "gp": "🇲🇨 모나코 그랑프리", "circuit": "서킷 드 모나코", "date": "6월 5일 - 6월 7일", "status": "COMPLETED"},
+    {"round": "ROUND 07", "gp": "🇪🇸 스페인 바르셀로나 GP", "circuit": "카탈루냐 서킷", "date": "6월 12일 - 6월 14일", "status": "COMPLETED"},
+    {"round": "ROUND 08", "gp": "🇦🇹 오스트리아 그랑프리", "circuit": "레드불 링", "date": "6월 26일 - 6월 28일", "status": "COMPLETED"},
     {"round": "ROUND 09", "gp": "🇬🇧 영국 그랑프리", "circuit": "실버스톤 서킷", "date": "7월 3일 - 7월 5일", "status": "COMPLETED"},
-    {"round": "ROUND 10", "gp": "🇧🇪 벨기에 그랑프리", "circuit": "스파-프랑코샹 서킷", "date": "7월 17일 - 7월 19일", "status": "COMPLETED"},
-    {"round": "ROUND 11", "gp": "🇭🇺 헝가리 그랑프리", "circuit": "헝가로링 (부다페스트)", "date": "7월 24일 - 7월 26일", "status": "COMPLETED"},
+    {"round": "ROUND 10", "gp": "🇧🇪 벨기에 그랑프리", "circuit": "스파-프랑코샹", "date": "7월 17일 - 7월 19일", "status": "COMPLETED"},
+    {"round": "ROUND 11", "gp": "🇭🇺 헝가리 그랑프리", "circuit": "헝가로링", "date": "7월 24일 - 7월 26일", "status": "COMPLETED"},
     {"round": "ROUND 12", "gp": "🇳🇱 네덜란드 그랑프리", "circuit": "잔트보르트 서킷", "date": "8월 21일 - 8월 23일", "status": "COMPLETED"},
-    {"round": "ROUND 13", "gp": "🇮🇹 이탈리아 몬차 GP", "circuit": "몬차 국립 서킷", "date": "9월 4일 - 9월 6일", "status": "NEXT_RACE"},
-    {"round": "ROUND 14", "gp": "🇪🇸 마드리드 그랑프리", "circuit": "마드리드 스트리트 서킷", "date": "9월 11일 - 9월 13일", "status": "UPCOMING"},
-    {"round": "ROUND 15", "gp": "🇦🇿 아제르바이젠 GP", "circuit": "바쿠 시티 서킷", "date": "9월 24일 - 9월 26일", "status": "UPCOMING"},
-    {"round": "ROUND 16", "gp": "🇸🇬 싱가포르 그랑프리", "circuit": "마리나 베이 스트리트 서킷", "date": "10월 9일 - 10월 11일", "status": "UPCOMING"},
-    {"round": "ROUND 17", "gp": "🇺🇸 미국 COTA GP", "circuit": "서킷 오브 디 아메리카스", "date": "10월 23일 - 10월 25일", "status": "UPCOMING"},
-    {"round": "ROUND 18", "gp": "🇲🇽 멕시코 그랑프리", "circuit": "아우토드로모 에르마노스 로드리게스", "date": "10월 30일 - 11월 1일", "status": "UPCOMING"},
-    {"round": "ROUND 19", "gp": "🇧🇷 브라질 상파울루 GP", "circuit": "인테르라고스 서킷", "date": "11월 6일 - 11월 8일", "status": "UPCOMING"},
-    {"round": "ROUND 20", "gp": "🇺🇸 라스베이거스 GP", "circuit": "라스베이거스 스트립 서킷", "date": "11월 19일 - 11월 21일", "status": "UPCOMING"},
-    {"round": "ROUND 21", "gp": "🇶🇦 카타르 그랑프리", "circuit": "루사일 인터내셔널 서킷", "date": "11월 27일 - 11월 29일", "status": "UPCOMING"},
+    {"round": "ROUND 13", "gp": "🇮🇹 이탈리아 몬차 GP", "circuit": "몬차 서킷", "date": "9월 4일 - 9월 6일", "status": "NEXT_RACE"},
+    {"round": "ROUND 14", "gp": "🇪🇸 마드리드 그랑프리", "circuit": "마드리드 서킷", "date": "9월 11일 - 9월 13일", "status": "UPCOMING"},
+    {"round": "ROUND 15", "gp": "🇦🇿 아제르바이젠 GP", "circuit": "바쿠 서킷", "date": "9월 24일 - 9월 26일", "status": "UPCOMING"},
+    {"round": "ROUND 16", "gp": "🇸🇬 싱가포르 그랑프리", "circuit": "마리나 베이 서킷", "date": "10월 9일 - 10월 11일", "status": "UPCOMING"},
+    {"round": "ROUND 17", "gp": "🇺🇸 미국 COTA GP", "circuit": "COTA 서킷", "date": "10월 23일 - 10월 25일", "status": "UPCOMING"},
+    {"round": "ROUND 18", "gp": "🇲🇽 멕시코 그랑프리", "circuit": "에르마노스 로드리게스", "date": "10월 30일 - 11월 1일", "status": "UPCOMING"},
+    {"round": "ROUND 19", "gp": "🇧🇷 브라질 상파울루 GP", "circuit": "인테르라고스", "date": "11월 6일 - 11월 8일", "status": "UPCOMING"},
+    {"round": "ROUND 20", "gp": "🇺🇸 라스베이거스 GP", "circuit": "라스베이거스 서킷", "date": "11월 19일 - 11월 21일", "status": "UPCOMING"},
+    {"round": "ROUND 21", "gp": "🇶🇦 카타르 그랑프리", "circuit": "루사일 서킷", "date": "11월 27일 - 11월 29일", "status": "UPCOMING"},
     {"round": "ROUND 22", "gp": "🇦🇪 아부다비 그랑프리", "circuit": "야스 마리나 서킷", "date": "12월 4일 - 12월 6일", "status": "UPCOMING"}
 ]
 
-# 4. 강제 가독성 확보 CSS 스타일링
+# 상단 F1 전용 로고
 st.markdown("""
-    <style>
-    /* 다크 모드 배경 설정 */
-    .stApp {
-        background-color: #0b0e14;
-    }
-    
-    html, body, [class*="css"], p, span, div, h1, h2, h3, h4, h5, h6 {
-        color: #FFFFFF;
-    }
-
-    /* selectbox 드롭다운 텍스트 투명/흰색 묻힘 현상 완벽 해결 */
-    div[data-baseweb="select"] {
-        background-color: #1a1f29 !important;
-        border-radius: 8px !important;
-        border: 1px solid #30363d !important;
-    }
-    div[data-baseweb="select"] div {
-        color: #FFFFFF !important;
-        font-weight: bold !important;
-    }
-    /* 드롭다운 메뉴 팝업 내부 박스 스타일 */
-    div[data-baseweb="popover"] ul {
-        background-color: #1a1f29 !important;
-        border: 1px solid #30363d !important;
-    }
-    div[data-baseweb="popover"] li {
-        background-color: #1a1f29 !important;
-        color: #FFFFFF !important;
-        font-weight: bold !important;
-    }
-    div[data-baseweb="popover"] li:hover {
-        background-color: #30363d !important;
-        color: #E10600 !important;
-    }
-
-    /* 헤더 스타일 */
-    .header-container {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 15px;
-        padding: 20px 0;
-        border-bottom: 3px solid #E10600;
-        margin-bottom: 30px;
-        background: linear-gradient(90deg, #161b22 0%, #0b0e14 50%, #161b22 100%);
-        border-radius: 12px;
-    }
-    .f1ow-text {
-        color: #E10600 !important;
-        font-size: 3.2rem;
-        font-weight: 900;
-        letter-spacing: 4px;
-        font-family: 'Arial Black', sans-serif;
-    }
-    .f1ow-sub {
-        color: #FFFFFF !important;
-        font-size: 1.1rem;
-        letter-spacing: 2px;
-        font-weight: bold;
-    }
-
-    /* 서브 타이틀 */
-    .sub-title {
-        color: #FFFFFF !important;
-        border-left: 5px solid #E10600;
-        padding-left: 12px;
-        font-size: 1.5rem;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
-
-    /* 팀 정보 카드 디자인 */
-    .team-info-card {
-        background: linear-gradient(145deg, #1c2128 0%, #13171d 100%);
-        padding: 25px;
-        border-radius: 15px;
-        border: 1px solid #30363d;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-        margin-bottom: 20px;
-    }
-
-    /* 드라이버 카드 */
-    .driver-box {
-        background-color: #161b22;
-        border-radius: 10px;
-        border: 1px solid #30363d;
-        padding: 18px;
-        margin-bottom: 15px;
-    }
-
-    /* 그랑프리 일정 카드가 F1 스타일로 가독성 강화됨 */
-    .gp-card {
-        background: linear-gradient(135deg, #161b22 0%, #0d1117 100%);
-        border: 1px solid #30363d;
-        border-radius: 12px;
-        padding: 18px 22px;
-        margin-bottom: 15px;
-    }
-    .gp-card.completed {
-        border-left: 6px solid #484f58;
-        opacity: 0.7;
-    }
-    .gp-card.next-race {
-        border-left: 6px solid #E10600;
-        background: linear-gradient(135deg, #221013 0%, #0d1117 100%);
-        box-shadow: 0 0 15px rgba(225, 6, 0, 0.3);
-    }
-    .gp-card.upcoming {
-        border-left: 6px solid #238636;
-    }
-
-    /* 상태 뱃지 */
-    .status-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: bold;
-        margin-bottom: 8px;
-    }
-    .badge-completed {
-        background-color: #30363d;
-        color: #8b949e !important;
-    }
-    .badge-next {
-        background-color: #E10600;
-        color: #FFFFFF !important;
-    }
-    .badge-upcoming {
-        background-color: #238636;
-        color: #FFFFFF !important;
-    }
-
-    .gp-round {
-        font-size: 0.85rem;
-        font-weight: bold;
-        color: #E10600 !important;
-    }
-    .gp-title {
-        font-size: 1.3rem;
-        font-weight: bold;
-        color: #FFFFFF !important;
-        margin: 4px 0;
-    }
-    .gp-circuit {
-        font-size: 0.95rem;
-        color: #8b949e !important;
-    }
-    .gp-date {
-        font-size: 1rem;
-        font-weight: bold;
-        color: #f0f6fc !important;
-    }
-    </style>
-""", unsafe_allow_html=True)
-
-# 헤더
-st.markdown("""
-    <div class="header-container">
-        <span class="f1ow-text">🏎️ F1ow</span>
-        <span class="f1ow-sub">| FORMULA 1 FAN HUB</span>
+    <div class="f1-logo-container">
+        <span class="f1-logo-text">F1</span>
+        <span class="f1-logo-sub">| FORMULA 1</span>
     </div>
 """, unsafe_allow_html=True)
 
 # 탭 구성
 tab1, tab2 = st.tabs(["🏎️ 팀 & 드라이버 검색", "📅 2026 그랑프리 일정"])
 
-# [TAB 1] 팀 선택 및 드라이버
+# [TAB 1] 팀 선택 및 클릭식 펼치기 기능 적용
 with tab1:
-    st.markdown('<div class="sub-title">F1 팀 정보 및 소속 드라이버 조회</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">F1 팀 및 드라이버 정보</div>', unsafe_allow_html=True)
     
-    selected_team = st.selectbox("조회할 팀을 선택하세요:", list(F1_TEAMS.keys()))
+    selected_team = st.selectbox("팀을 선택하세요 (팀 이름을 클릭):", list(F1_TEAMS.keys()))
     
     if selected_team:
         team = F1_TEAMS[selected_team]
         team_color = team["color"]
         
-        # 선택된 팀의 시그니처 대표 색상을 왼쪽 포인트 라인과 제목에 바로 적용
+        # 기본 정보 상자 (팀 색상 적용)
         st.markdown(f"""
-            <div class="team-info-card" style="border-left: 8px solid {team_color};">
-                <div style="font-size: 2.2rem; font-weight: 900; color: {team_color} !important; margin-bottom: 12px;">
-                    🏁 {selected_team}
-                </div>
-                <p style="font-size: 1.1rem; margin-bottom: 6px;"><b>🗓️ 창단 연도:</b> {team['founded']}</p>
-                <p style="font-size: 1.1rem; margin-bottom: 14px;"><b>📍 본거지:</b> {team['base']}</p>
-                <div style="background-color: #21262d; padding: 15px; border-radius: 8px; border-left: 4px solid {team_color};">
-                    <p style="margin:0; font-size: 1.05rem; line-height: 1.5;"><b>💡 팀 특징:</b><br>{team['features']}</p>
-                </div>
+            <div class="team-summary-box" style="border-left: 8px solid {team_color};">
+                <h2 style="color:{team_color} !important; margin: 0 0 10px 0;">🏁 {selected_team}</h2>
+                <p style="margin-bottom: 4px;"><b>🗓️ 창단 연도:</b> {team['founded']}</p>
+                <p style="margin-bottom: 0px;"><b>📍 본거지:</b> {team['base']}</p>
             </div>
         """, unsafe_allow_html=True)
         
-        st.markdown("### 👨‍✈️ 소속 드라이버 라인업")
+        # 팀 상세 설명 - 클릭해서 열기
+        with st.expander(f"📖 {selected_team} 상세 팀 정보 보기 (클릭)"):
+            st.write(team["features"])
         
+        st.write("")
+        st.markdown("### 👨‍✈️ 소속 드라이버")
+        
+        # 드라이버 설명 - 각각 클릭해서 열기
         col1, col2 = st.columns(2)
         for idx, driver in enumerate(team["drivers"]):
             target_col = col1 if idx == 0 else col2
             with target_col:
-                st.markdown(f"""
-                    <div class="driver-box" style="border-top: 4px solid {team_color};">
-                        <h4 style="color:{team_color} !important; margin-top:0;">🏎️ Car No. {driver['no']}</h4>
-                        <h3 style="color:#FFFFFF !important; margin-bottom:10px;">{driver['name']}</h3>
-                        <p style="margin-bottom:6px;"><b>🚩 국적:</b> {driver['country']}</p>
-                        <hr style="border-color:#30363d;">
-                        <p style="font-size:0.95rem; line-height:1.4; color:#c9d1d9;">{driver['bio']}</p>
-                    </div>
-                """, unsafe_allow_html=True)
+                st.markdown(f"#### 🏎️ No. {driver['no']} {driver['name']}")
+                st.write(f"**국적:** {driver['country']}")
+                
+                with st.expander(f"👤 {driver['name']} 드라이버 상세 설명 보기 (클릭)"):
+                    st.write(driver["bio"])
 
 # [TAB 2] 2026 그랑프리 일정표
 with tab2:
-    st.markdown('<div class="sub-title">2026 시즌 레이스 전체 일정</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">2026 시즌 그랑프리 레이스 일정표</div>', unsafe_allow_html=True)
     
     completed_count = sum(1 for item in F1_SCHEDULE_KOREAN if item["status"] == "COMPLETED")
     total_count = len(F1_SCHEDULE_KOREAN)
