@@ -10,7 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Custom CSS (다크 매트 블랙 + F1 시그니처 레드 스타일링)
+# Custom CSS (다크 매트 블랙 base)
 st.markdown(
     """
     <style>
@@ -26,7 +26,7 @@ st.markdown(
         border-right: 1px solid #22222a;
     }
 
-    /* 텍스트 색상 및 글로벌 서식 강제 하얀색 */
+    /* 텍스트 색상 강제 하얀색 */
     h1, h2, h3, h4, h5, h6, p, span, label, div {
         color: #ffffff !important;
     }
@@ -36,16 +36,6 @@ st.markdown(
         text-align: center;
         padding: 10px 0 20px 0;
     }
-    
-    /* 카드 디자인 */
-    .f1-card {
-        background: linear-gradient(135deg, #16161c 0%, #0d0d11 100%);
-        border-radius: 12px;
-        padding: 24px;
-        margin-bottom: 25px;
-        border-left: 6px solid #e10600;
-        box-shadow: 0 8px 16px rgba(225, 6, 0, 0.15);
-    }
 
     /* 드라이버 명함 카드 */
     .driver-card {
@@ -54,7 +44,6 @@ st.markdown(
         border-radius: 10px;
         padding: 15px 20px;
         margin-bottom: 10px;
-        border-top: 3px solid #e10600;
     }
 
     /* 검색창 스타일 */
@@ -69,16 +58,14 @@ st.markdown(
         box-shadow: 0 0 8px rgba(225, 6, 0, 0.5) !important;
     }
 
-    /* 일정표 아이템 스타일 */
-    .schedule-item {
-        background-color: #161620;
-        border-radius: 10px;
-        padding: 15px 20px;
-        margin-bottom: 12px;
-        border-left: 4px solid #e10600;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+    /* 일정표 2열 그리드 카드 스타일 */
+    .schedule-card {
+        background: linear-gradient(135deg, #161620 0%, #111118 100%);
+        border: 1px solid #282838;
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
     .status-completed {
         color: #4CAF50 !important;
@@ -108,8 +95,23 @@ st.markdown("</div>", unsafe_allow_html=True)
 st.divider()
 
 # ---------------------------------------------------------
-# Data Definition & Search Mapping
+# Data Definition & Team Colors Mapping
 # ---------------------------------------------------------
+# 각 팀별 대표 테두리 색상 (Border Color)
+team_colors = {
+    "Red Bull Racing": "#e10600",  # 레드
+    "Ferrari": "#ffeb3b",  # 페라리 옐로우
+    "Mercedes": "#00d2be",  # 페트로나스 초록/민트
+    "McLaren": "#ff8000",  # 파파야 오렌지
+    "Aston Martin": "#006f62",  # 레이싱 그린
+    "Alpine": "#0090ff",  # 알핀 블루
+    "Williams": "#005aff",  # 윌리엄스 블루
+    "Racing Bulls": "#6699ff",  # RB 레이싱 블루
+    "Haas F1 Team": "#e60000",  # 하스 레드
+    "Audi": "#ffffff",  # 아우디 실버/화이트
+    "Cadillac F1 Team": "#c0c0c0",  # 캐딜락 메탈릭
+}
+
 team_aliases = {
     "Red Bull Racing": [
         "redbull",
@@ -539,14 +541,27 @@ if page == "팀 및 드라이버 검색":
     else:
         for team_name in matched_teams:
             info = teams_data[team_name]
+            border_color = team_colors.get(
+                team_name, "#e10600"
+            )  # 지정된 팀 고유 컬러
+
+            # 팀 카드 UI (팀 대표 컬러 테두리 적용)
             st.markdown(
                 f"""
-                <div class="f1-card">
+                <div style="
+                    background: linear-gradient(135deg, #16161c 0%, #0d0d11 100%);
+                    border-radius: 12px;
+                    padding: 24px;
+                    margin-bottom: 25px;
+                    border-left: 8px solid {border_color};
+                    border-top: 1px solid {border_color}44;
+                    box-shadow: 0 8px 20px {border_color}22;
+                ">
                     <h2 style="color: #ffffff !important; margin-bottom: 10px;">🏎️ {team_name}</h2>
-                    <p style="font-size: 1.05rem;"><b>⚙️ 파워 유닛:</b> <span style="color: #e10600 !important;">{info['engine']}</span></p>
+                    <p style="font-size: 1.05rem;"><b>⚙️ 파워 유닛:</b> <span style="color: {border_color} !important; font-weight: bold;">{info['engine']}</span></p>
                     <p style="font-size: 1.05rem;"><b>📍 팀 베이스:</b> {info['base']}</p>
                     <hr style="border-color: #333344; margin: 15px 0;">
-                    <p style="font-size: 1.0m; line-height: 1.6; color: #dddddd !important;">{info['description']}</p>
+                    <p style="font-size: 1.0rem; line-height: 1.6; color: #dddddd !important;">{info['description']}</p>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -560,7 +575,7 @@ if page == "팀 및 드라이버 검색":
                 ):
                     st.markdown(
                         f"""
-                        <div class="driver-card">
+                        <div class="driver-card" style="border-top: 3px solid {border_color};">
                             <h4 style="color: #ffffff !important; margin-bottom: 8px;">#{driver['number']} {driver['name']}</h4>
                             <p style="color: #aaaaaa !important; margin-bottom: 12px;"><b>국적:</b> {driver['nationality']}</p>
                             <p style="line-height: 1.7; font-size: 0.98rem; color: #eeeeee !important;">{driver['long_desc']}</p>
@@ -571,14 +586,14 @@ if page == "팀 및 드라이버 검색":
             st.divider()
 
 # ---------------------------------------------------------
-# Page 2: Grand Prix Schedule (분리형 카드 레이아웃으로 오류 해결)
+# Page 2: Grand Prix Schedule (2개씩 두 줄 그리드 배치)
 # ---------------------------------------------------------
 else:
     st.subheader("📅 2026 F1 그랑프리 레이스 일정")
 
     today = datetime.now().date()
 
-    # 상단 요약 카드
+    # 상단 요약 카운터
     completed_count = sum(
         1
         for r in schedule_data
@@ -593,41 +608,59 @@ else:
 
     st.divider()
 
-    # 테이블 겹침 오류를 완벽 방지하는 독립적인 리스트 레이아웃
-    for race in schedule_data:
-        race_date = datetime.strptime(race["Date"], "%Y-%m-%d").date()
-        is_completed = race_date < today
+    # 2개씩 한 줄에 배치하도록 그리드 구성
+    for i in range(0, len(schedule_data), 2):
+        col1, col2 = st.columns(2)
 
-        # 컬럼 분리로 가독성 확보
-        col_round, col_gp, col_loc, col_date, col_status = st.columns(
-            [1, 2, 3, 2, 1.5]
-        )
+        # 1번째 카드
+        with col1:
+            race1 = schedule_data[i]
+            race1_date = datetime.strptime(race1["Date"], "%Y-%m-%d").date()
+            is_completed1 = race1_date < today
+            status_html1 = (
+                "<span class='status-completed'>✅ 종료됨</span>"
+                if is_completed1
+                else "<span class='status-upcoming'>🏁 예정됨</span>"
+            )
 
-        with col_round:
-            st.markdown(f"**Round {race['Round']}**")
+            st.markdown(
+                f"""
+                <div class="schedule-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="background-color: #e10600; color: white !important; padding: 3px 8px; border-radius: 5px; font-weight: bold; font-size: 0.85rem;">Round {race1['Round']}</span>
+                        {status_html1}
+                    </div>
+                    <h3 style="margin: 8px 0 12px 0; font-size: 1.3rem;">🏎️ {race1['Grand Prix']}</h3>
+                    <p style="margin: 4px 0; color: #cccccc !important;">📍 {race1['Location']}</p>
+                    <p style="margin: 4px 0; color: #aaaaaa !important;">📅 <b>일자:</b> {race1['Date']}</p>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
-        with col_gp:
-            st.markdown(f"🏎️ **{race['Grand Prix']}**")
+        # 2번째 카드 (홀수 항목이 존재하는 경우)
+        with col2:
+            if i + 1 < len(schedule_data):
+                race2 = schedule_data[i + 1]
+                race2_date = datetime.strptime(race2["Date"], "%Y-%m-%d").date()
+                is_completed2 = race2_date < today
+                status_html2 = (
+                    "<span class='status-completed'>✅ 종료됨</span>"
+                    if is_completed2
+                    else "<span class='status-upcoming'>🏁 예정됨</span>"
+                )
 
-        with col_loc:
-            st.markdown(f"{race['Location']}")
-
-        with col_date:
-            st.markdown(f"📅 {race['Date']}")
-
-        with col_status:
-            if is_completed:
                 st.markdown(
-                    "<span class='status-completed'>✅ 종료됨</span>",
+                    f"""
+                    <div class="schedule-card">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span style="background-color: #e10600; color: white !important; padding: 3px 8px; border-radius: 5px; font-weight: bold; font-size: 0.85rem;">Round {race2['Round']}</span>
+                            {status_html2}
+                        </div>
+                        <h3 style="margin: 8px 0 12px 0; font-size: 1.3rem;">🏎️ {race2['Grand Prix']}</h3>
+                        <p style="margin: 4px 0; color: #cccccc !important;">📍 {race2['Location']}</p>
+                        <p style="margin: 4px 0; color: #aaaaaa !important;">📅 <b>일자:</b> {race2['Date']}</p>
+                    </div>
+                    """,
                     unsafe_allow_html=True,
                 )
-            else:
-                st.markdown(
-                    "<span class='status-upcoming'>🏁 예정됨</span>",
-                    unsafe_allow_html=True,
-                )
-
-        st.markdown(
-            "<hr style='border: 0; border-top: 1px solid #222230; margin: 8px 0;'>",
-            unsafe_allow_html=True,
-        )
